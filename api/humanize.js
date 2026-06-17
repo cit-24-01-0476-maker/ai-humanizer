@@ -1,58 +1,49 @@
 export default async function handler(req, res) {
-    // 1. CORS Security හෙවත් App එකෙන් එන Request වලට ඉඩ දීම (CORS Headers)
+    // CORS Headers (App එකට ඕන නිසා)
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, POST, GET');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-    // Preflight OPTIONS request එකට OK කියන්න
-    if (req.method === 'OPTIONS') {
-        return res.status(200).end();
-    }
+    if (req.method === 'OPTIONS') return res.status(200).end();
+    if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-    // POST request එකක් නෙමෙයි නම් Error එකක් යවන්න
-    if (req.method !== 'POST') {
-        return res.status(405).json({ error: 'Method Not Allowed' });
-    }
+    const { text } = req.body;
+    const apiKey = process.env.GEMINI_API_KEY;
 
     try {
-        const { text } = req.body;
+        // පියවර 1: පවතින Models ලැයිස්තුව ගැනීම
+        const modelsResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
+        const modelsData = await modelsResponse.json();
+
+        // පියවර 2: Flash Model එකක් තෝරාගැනීම (වඩාත් ස්ථාවර)
+        const flashModel = modelsData.models.find(m => m.name.includes('gemini-1.5-flash') && m.supportedGenerationMethods.includes('generateContent'));
         
-        if (!text) {
-            return res.status(400).json({ error: 'Text is required' });
+        if (!flashModel) {
+            return res.status(500).json({ error: 'ගැලපෙන AI Model එකක් හමු නොවීය.' });
         }
 
-        // 2. Google Gemini API එකට කතා කිරීම
-        const apiKey = process.env.GEMINI_API_KEY; // ඔයාගේ Vercel එකේ තියෙන API Key එක
-        
-        // මෙන්න මේ ලින්ක් එක තමයි අපි අලුතින් Update කළේ (gemini-1.5-flash-latest)
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
+        // පියවර 3: නිවැරදි URL ආකෘතියෙන් Request කිරීම
+        // මෙතනදී "models/model-name" කියන කොටස URL එකට දානවා
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/${flashModel.name}:generateContent?key=${apiKey}`;
 
-        const prompt = `Rewrite the following text to make it sound completely natural, conversational, and written by a real human. Remove any AI-sounding tone. Text: ${text}`;
-
-        const response = await fetch(apiUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+        const generateResponse = await fetch(apiUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 contents: [{
-                    parts: [{ text: prompt }]
+                    parts: [{ text: "Please rewrite the following text to sound more natural, human-like, and conversational. Do not add extra comments, just provide the humanized text: \n\n" + text }]
                 }]
             })
         });
 
-        const data = await response.json();
+        const data = await generateResponse.json();
         
-        // Error ආවොත් (උදාහරණයක් විදියට 503 High Demand Error)
-        if (!response.ok) {
-            return res.status(response.status).json({ error: data.error?.message || 'API Error', code: response.status });
+        if (data.candidates && data.candidates[0].content.parts[0].text) {
+            res.status(200).json({ result: data.candidates[0].content.parts[0].text });
+        } else {
+            res.status(500).json({ error: 'Generation Error: ' + JSON.stringify(data) });
         }
-
-        const result = data.candidates[0].content.parts[0].text;
-        
-        // ප්‍රතිඵලය ආපසු යැවීම
-        res.status(200).json({ result: result });
-
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Something went wrong! Please try again.' });
+        res.status(500).json({ error: 'Server Error: ' + error.message });
     }
 }
