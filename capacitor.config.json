@@ -2,5 +2,20 @@
   "appId": "com.oska.ezyhumanizer",
   "appName": "ezyhumernzi.AI",
   "webDir": "www",
-  "bundledWebRuntime": false
+  "server": {
+    "url": "https://ezyhumernzi.ai.oskaa.tech",
+    "cleartext": false,
+    "allowNavigation": [
+      "ezyhumernzi.ai.oskaa.tech",
+      "*.oskaa.tech",
+      "www.oskavpn.codes"
+    ]
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 1500,
+      "backgroundColor": "#000000",
+      "showSpinner": false
+    }
+  }
 }
