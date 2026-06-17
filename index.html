@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ezyhumernzi.AI</title>
+    <!-- Tab Logo -->
     <link rel="icon" type="image/gif" href="logo.gif">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@1,600&display=swap" rel="stylesheet">
     
@@ -139,6 +140,7 @@
         </div>
     </div>
 
+    <!-- Modals -->
     <div id="howItWorksModal" class="modal-overlay"><div class="modal-content"><span class="close-modal" onclick="playSound(); closeModal('howItWorksModal')">&times;</span><h2>How It Works</h2><p style="text-align: left;">1. Paste your AI-written text into the box.<br>2. Click 'Humanize'.<br>3. We rephrase it to sound naturally human.<br>4. Copy the result and use it!</p></div></div>
     <div id="helpModal" class="modal-overlay"><div class="modal-content"><span class="close-modal" onclick="playSound(); closeModal('helpModal')">&times;</span><h2>Help & Tips</h2><p style="text-align: left;">• Word Limit: 200 words per request.<br>• If you see '503 High Demand' error, please wait 10 seconds and try again.<br>• Ensure your text is clear for best results.</p></div></div>
     <div id="contactModal" class="modal-overlay"><div class="modal-content"><span class="close-modal" onclick="playSound(); closeModal('contactModal')">&times;</span><h2>Contact Details</h2><p><strong>Oshadha Perera</strong><br>SRILANKA<br>📞 0754565755<br>✉️ oshadahperera500@gmail.com</p></div></div>
@@ -176,18 +178,27 @@
             document.getElementById("humanizeBtn").innerText = "Humanizing... ⏳";
             
             try {
-                // මෙතන තමයි ඔයාගේ ඇත්තම Vercel URL එක සම්බන්ධ කරලා තියෙන්නේ. මේකෙන් Android App එකටත් AI එක වැඩ කරනවා!
-                const response = await fetch('https://ai-humanizer-git-main-oshadhapereras-projects.vercel.app/api/humanize', {
+                // Web එකටයි App එකටයි Auto ලින්ක් එක හැදෙන කෝඩ් එක
+                let apiUrl = '/api/humanize'; 
+                // ෆෝන් App එකෙන් එනවා නම් සම්පූර්ණ ලින්ක් එක පාවිච්චි කරන්න
+                if (window.location.href.includes('localhost') || window.location.href.includes('capacitor')) {
+                    apiUrl = 'https://ezyhumernzi.ai.oskaa.tech/api/humanize'; 
+                }
+
+                const response = await fetch(apiUrl, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ text })
                 });
+                
                 const data = await response.json();
                 
-                if (data.error && data.error.code === 503) {
+                if (data.error && data.code === 503) {
                     document.getElementById("resultBox").innerHTML = "<span style='color: #e74c3c;'>Google AI සර්වර් එක මේ වෙලාවේ ගොඩක් කාර්යබහුලයි. කරුණාකර තත්පර 10කින් ආයෙත් ඔබන්න! ⏳</span>";
+                } else if (data.error) {
+                    document.getElementById("resultBox").innerHTML = "<span style='color: red;'>❌ Error: " + data.error + "</span>";
                 } else {
-                    document.getElementById("resultBox").innerHTML = data.result || "<span style='color: red;'>❌ Error: " + data.error + "</span>";
+                    document.getElementById("resultBox").innerHTML = data.result;
                 }
             } catch (error) {
                 document.getElementById("resultBox").innerHTML = "<span style='color: red;'>❌ Network or API Error! Make sure you have internet connection.</span>";

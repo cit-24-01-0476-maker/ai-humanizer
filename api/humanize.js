@@ -1,62 +1,56 @@
-module.exports = async function handler(req, res) {
-    if (req.method !== 'POST') {
-        return res.status(405).json({ error: 'Method not allowed' });
+export default async function handler(req, res) {
+    // 1. CORS Security හෙවත් App එකෙන් එන Request වලට ඉඩ දීම (CORS Headers)
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, POST, GET');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+    // Preflight OPTIONS request එකට OK කියන්න
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end();
     }
 
-    const { text } = req.body;
-    const apiKey = process.env.GEMINI_API_KEY;
-
-    if (!apiKey) {
-        return res.status(500).json({ error: 'API Key එක Vercel එකට සම්බන්ධ වෙලා නැහැ!' });
+    // POST request එකක් නෙමෙයි නම් Error එකක් යවන්න
+    if (req.method !== 'POST') {
+        return res.status(405).json({ error: 'Method Not Allowed' });
     }
 
     try {
-        // පියවර 1: Model එක තෝරාගැනීම
-        const modelsResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
-        const modelsData = await modelsResponse.json();
-
-        if (!modelsData.models) {
-            return res.status(500).json({ error: 'Models ලිස්ට් එක ගන්න බැරි වුණා. API Key එකේ අවුලක් වෙන්න පුළුවන්.' });
+        const { text } = req.body;
+        
+        if (!text) {
+            return res.status(400).json({ error: 'Text is required' });
         }
 
-        let selectedModel = '';
-        for (const model of modelsData.models) {
-            if (model.supportedGenerationMethods && model.supportedGenerationMethods.includes('generateContent')) {
-                selectedModel = model.name;
-                if (selectedModel.includes('flash')) break;
-            }
-        }
+        // 2. Google Gemini API එකට කතා කිරීම
+        const apiKey = process.env.GEMINI_API_KEY; // ඔයාගේ Vercel එකේ තියෙන API Key එක
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
-        if (!selectedModel) {
-            return res.status(500).json({ error: 'ඔයාගේ ගිණුමට ගැලපෙන AI Model එකක් හොයාගන්න බැහැ.' });
-        }
+        const prompt = `Rewrite the following text to make it sound completely natural, conversational, and written by a real human. Remove any AI-sounding tone. Text: ${text}`;
 
-        // පියවර 2: Text එක Humanize කිරීම
-        const generateResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/${selectedModel}:generateContent?key=${apiKey}`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 contents: [{
-                    parts: [{ text: "Please rewrite the following text to sound more natural, human-like, and conversational. Do not add extra comments, just provide the humanized text: \n\n" + text }]
+                    parts: [{ text: prompt }]
                 }]
             })
         });
 
-        const data = await generateResponse.json();
+        const data = await response.json();
         
-        // --------------------------------------------------------
-        // මේ කොටස තමයි අලුතින් දැම්මේ (Google සර්වර් Busy වෙලාවට)
-        if (data.error && data.error.code === 503) {
-            return res.status(503).json({ error: 'Google AI සර්වර් එක මේ වෙලාවේ ගොඩක් කාර්යබහුලයි (High Demand). කරුණාකර තත්පර 10කින් ආයෙත් ඔබන්න! ⏳' });
+        // Error ආවොත් (උදාහරණයක් විදියට 503 High Demand Error)
+        if (!response.ok) {
+            return res.status(response.status).json({ error: data.error?.message || 'API Error', code: response.status });
         }
-        // --------------------------------------------------------
+
+        const result = data.candidates[0].content.parts[0].text;
         
-        if(data.candidates && data.candidates[0].content.parts[0].text) {
-            res.status(200).json({ result: data.candidates[0].content.parts[0].text });
-        } else {
-            res.status(500).json({ error: data.error ? data.error.message : 'Generation Error' });
-        }
+        // ප්‍රතිඵලය ආපසු යැවීම
+        res.status(200).json({ result: result });
+
     } catch (error) {
-        res.status(500).json({ error: 'Server Error: ' + error.message });
+        console.error(error);
+        res.status(500).json({ error: 'Something went wrong! Please try again.' });
     }
 }
