@@ -1,5 +1,9 @@
 {
-  "appId": "com.oska.ezyhumernzi",
-  "appName": "ezyhumernzi",
-  "webDir": "www"
+  "appId": "com.oska.ezyhumanizer",
+  "appName": "ezyhumernzi.AI",
+  "webDir": "www",
+  "server": {
+    "url": "https://ai-humanizer-git-main-oshadhapereras-projects.vercel.app",
+    "cleartext": false
+  }
 }
