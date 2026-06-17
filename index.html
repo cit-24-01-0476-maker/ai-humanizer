@@ -3,42 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Humanizer - Premium</title>
+    <title>AI Humanizer - Powered by oska.tech</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@1,600&display=swap" rel="stylesheet">
     
     <style>
         * { box-sizing: border-box; }
+        
+        /* Moving Cloud Background Animation */
         body { 
             margin: 0; 
             font-family: 'Inter', sans-serif; 
-            /* අහසක් වගේ ලස්සන නිල් පසුබිම */
-            background: linear-gradient(135deg, #7ab0d6 0%, #d4e4f7 100%); 
             color: #333; 
             min-height: 100vh; 
             display: flex; 
             flex-direction: column; 
             align-items: center; 
             padding: 40px 20px; 
+            
+            /* ඔයාගේ පින්තූරය මෙතනින් සම්බන්ධ වේ */
+            background-image: url('bg.jpg'); 
+            background-size: 120% 120%; /* Animation එකට ඉඩ තියන්න ටිකක් ලොකු කරලා තියෙන්නේ */
+            background-position: center;
+            background-attachment: fixed;
+            animation: moveClouds 40s linear infinite alternate;
         }
 
-        /* ප්‍රධාන මාතෘකා කොටස */
-        .hero { text-align: center; color: white; margin-bottom: 40px; margin-top: 20px; }
-        .hero h1 { font-size: 3.5rem; font-weight: 300; margin: 0; text-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .hero h1 span { font-family: 'Playfair Display', serif; font-style: italic; font-weight: 600; }
-        .hero p { font-size: 1.1rem; opacity: 0.9; max-width: 500px; margin: 15px auto; line-height: 1.5; }
+        @keyframes moveClouds {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
 
-        /* සුදු පාට ප්‍රධාන Box එක */
+        /* 3D Bubbles Animation */
+        .bubbles-container {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+        .bubble {
+            position: absolute;
+            bottom: -100px;
+            background: radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.1));
+            border-radius: 50%;
+            box-shadow: inset 0 0 20px rgba(255,255,255,0.6), 0 10px 20px rgba(0,0,0,0.1);
+            animation: rise infinite ease-in;
+        }
+        .bubble:nth-child(1) { width: 60px; height: 60px; left: 15%; animation-duration: 8s; }
+        .bubble:nth-child(2) { width: 120px; height: 120px; left: 35%; animation-duration: 12s; animation-delay: 2s; }
+        .bubble:nth-child(3) { width: 40px; height: 40px; left: 65%; animation-duration: 6s; animation-delay: 1s; }
+        .bubble:nth-child(4) { width: 80px; height: 80px; left: 80%; animation-duration: 10s; animation-delay: 4s; }
+        .bubble:nth-child(5) { width: 50px; height: 50px; left: 50%; animation-duration: 7s; animation-delay: 3s; }
+
+        @keyframes rise {
+            0% { bottom: -150px; transform: translateX(0) scale(1); opacity: 0.8; }
+            50% { transform: translateX(30px) scale(1.1); }
+            100% { bottom: 110vh; transform: translateX(-30px) scale(1); opacity: 0; }
+        }
+
+        /* Hero Section */
+        .hero { text-align: center; color: white; margin-bottom: 40px; margin-top: 20px; text-shadow: 0 4px 15px rgba(0,0,0,0.4); }
+        .hero h1 { font-size: 3.8rem; font-weight: 300; margin: 0; }
+        .hero h1 span { font-family: 'Playfair Display', serif; font-style: italic; font-weight: 600; }
+        .hero p { font-size: 1.2rem; opacity: 0.95; max-width: 500px; margin: 15px auto; line-height: 1.5; font-weight: 400; }
+
+        /* Glassmorphism App Box */
         .app-box { 
-            background: white; 
+            background: rgba(255, 255, 255, 0.7); 
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
             border-radius: 24px; 
             width: 100%; 
             max-width: 800px; 
             padding: 30px; 
-            box-shadow: 0 20px 50px rgba(0,0,0,0.1); 
-            transition: all 0.3s ease;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2); 
         }
 
-        /* ටයිප් කරන තැන */
         .input-area { 
             width: 100%; 
             height: 250px; 
@@ -47,21 +88,21 @@
             font-size: 1.2rem; 
             outline: none; 
             font-family: 'Inter', sans-serif; 
-            color: #444; 
+            color: #222; 
             line-height: 1.6;
+            background: transparent;
         }
-        .input-area::placeholder { color: #bbb; }
+        .input-area::placeholder { color: #666; font-weight: 300; }
 
-        /* යට තියෙන බොත්තම් සහ වචන ගණන පෙන්වන පේළිය */
         .controls { 
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
             padding-top: 20px; 
-            border-top: 1px solid #f0f0f0; 
+            border-top: 1px solid rgba(0,0,0,0.1); 
             margin-top: 10px;
         }
-        .word-count { font-size: 0.9rem; color: #888; font-weight: 600; }
+        .word-count { font-size: 0.95rem; color: #444; font-weight: 600; }
         
         .btn-group { display: flex; gap: 10px; }
         .btn { 
@@ -71,41 +112,59 @@
             cursor: pointer; 
             font-size: 0.95rem; 
             font-weight: 600; 
-            transition: all 0.2s; 
+            transition: all 0.3s; 
         }
-        .btn-outline { background: white; border: 1px solid #ddd; color: #555; }
-        .btn-outline:hover { background: #f9f9f9; border-color: #ccc; }
-        .btn-black { background: #111; color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
-        .btn-black:hover { background: #333; transform: translateY(-2px); }
+        .btn-outline { background: rgba(255,255,255,0.6); border: 1px solid rgba(0,0,0,0.1); color: #333; }
+        .btn-outline:hover { background: rgba(255,255,255,0.9); }
+        .btn-black { background: #111; color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        .btn-black:hover { background: #333; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.4); }
         .btn-black:disabled { background: #888; cursor: not-allowed; transform: none; }
 
-        /* ප්‍රතිඵලය පෙන්වන කොටස */
         .result-box { 
             margin-top: 25px; 
-            background: #f8fbff; 
-            border: 1px solid #e0ebf5;
+            background: rgba(255,255,255,0.8); 
             border-radius: 16px; 
             padding: 25px; 
             font-size: 1.15rem; 
-            color: #222; 
+            color: #111; 
             display: none; 
             line-height: 1.6; 
             white-space: pre-wrap;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
         }
 
-        /* AI Detectors සලකුණු (පහළින්) */
-        .trust-section { margin-top: 60px; text-align: center; width: 100%; max-width: 800px; background: white; padding: 30px; border-radius: 30px 30px 0 0; }
-        .trust-section p { color: #888; font-size: 0.9rem; font-style: italic; margin-bottom: 20px; }
-        .badges { display: flex; gap: 30px; justify-content: center; flex-wrap: wrap; opacity: 0.5; font-weight: bold; font-size: 1.2rem; color: #333; }
+        .trust-section { margin-top: 50px; text-align: center; width: 100%; max-width: 800px; background: rgba(255,255,255,0.6); backdrop-filter: blur(10px); padding: 30px; border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .trust-section p { color: #444; font-size: 0.95rem; font-style: italic; margin-bottom: 20px; font-weight: 600; }
+        .badges { display: flex; gap: 30px; justify-content: center; flex-wrap: wrap; opacity: 0.7; font-weight: bold; font-size: 1.2rem; color: #222; }
+        
+        /* Footer / Powered By */
+        .footer {
+            margin-top: auto;
+            padding: 30px 20px 10px 20px;
+            color: white;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
         
         @media (max-width: 600px) {
-            .hero h1 { font-size: 2.5rem; }
+            .hero h1 { font-size: 2.8rem; }
             .controls { flex-direction: column; gap: 15px; align-items: flex-start; }
-            .btn-group { width: 100%; display: flex; justify-content: space-between; }
+            .btn-group { width: 100%; display: flex; justify-content: space-between; flex-wrap: wrap; }
         }
     </style>
 </head>
 <body>
+
+    <div class="bubbles-container">
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+    </div>
 
     <div class="hero">
         <h1>AI wrote it.<br>We <span>Humanize</span> it</h1>
@@ -119,7 +178,7 @@
             <div class="word-count"><span id="wordCount">0</span> words</div>
             <div class="btn-group">
                 <button class="btn btn-outline">Check For AI</button>
-                <button class="btn btn-outline">Style ⌄</button>
+                <button class="btn btn-outline" style="font-weight: bold; color: #0056b3;">v.1 oskaai</button>
                 <button class="btn btn-black" id="humanizeBtn" onclick="humanizeText()">Humanize ✦</button>
             </div>
         </div>
@@ -137,15 +196,17 @@
         </div>
     </div>
 
+    <div class="footer">
+        Powered by oska.tech
+    </div>
+
     <script>
-        // වචන ගණන් කරන Function එක
         function updateWordCount() {
             const text = document.getElementById("inputText").value;
             const words = text.trim().split(/\s+/).filter(word => word.length > 0).length;
             document.getElementById("wordCount").innerText = words;
         }
 
-        // AI එකට කතා කරන Function එක
         async function humanizeText() {
             const text = document.getElementById("inputText").value;
             const resultBox = document.getElementById("resultBox");
@@ -156,11 +217,10 @@
                 return;
             }
 
-            // Button එක Loading විදියට වෙනස් කරනවා
             btn.innerText = "Humanizing... ⏳";
             btn.disabled = true;
             resultBox.style.display = "block";
-            resultBox.innerHTML = "<span style='color: #666;'>Crafting human-like text... Please wait.</span>";
+            resultBox.innerHTML = "<span style='color: #444; font-style: italic;'>Crafting human-like text... Please wait.</span>";
 
             try {
                 const response = await fetch('/api/humanize', {
@@ -182,7 +242,6 @@
                 resultBox.innerHTML = "<span style='color: red;'>❌ Network or API Error!</span>";
                 console.error(error);
             } finally {
-                // Button එක ආයෙත් පරණ විදියට හදනවා
                 btn.innerText = "Humanize ✦";
                 btn.disabled = false;
             }
