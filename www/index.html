@@ -5,14 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ezyhumernzi.AI</title>
 
+    <!-- Tab Logo -->
     <link rel="icon" type="image/gif" href="logo.gif">
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@1,600&display=swap" rel="stylesheet">
     
     <style>
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
         
         body { 
             margin: 0; 
@@ -30,15 +29,11 @@
         }
 
         @keyframes moveClouds {
-            0% {
-                background-position: 0% 20%;
-            }
-
-            100% {
-                background-position: 100% 80%;
-            }
+            0% { background-position: 0% 20%; }
+            100% { background-position: 100% 80%; }
         }
 
+        /* Nav */
         .top-nav {
             width: 100%;
             padding: 25px 50px;
@@ -98,6 +93,7 @@
             font-weight: 600 !important;
         }
 
+        /* Hero */
         .hero {
             text-align: center;
             color: white;
@@ -151,6 +147,7 @@
             transform: scale(0.95);
         }
 
+        /* Floating Box */
         .app-box {
             background: rgba(255, 255, 255, 0.98);
             border-radius: 20px;
@@ -163,17 +160,9 @@
         }
 
         @keyframes floatEffect {
-            0% {
-                transform: translateY(0px);
-            }
-
-            50% {
-                transform: translateY(-10px);
-            }
-
-            100% {
-                transform: translateY(0px);
-            }
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
         }
 
         .input-area {
@@ -215,7 +204,7 @@
         }
 
         .btn:disabled {
-            opacity: 0.5;
+            opacity: 0.55;
             cursor: not-allowed;
         }
 
@@ -264,6 +253,7 @@
             cursor: pointer;
         }
 
+        /* Modals */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -290,15 +280,8 @@
         }
 
         @keyframes popIn {
-            from {
-                transform: scale(0.8);
-                opacity: 0;
-            }
-
-            to {
-                transform: scale(1);
-                opacity: 1;
-            }
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
         }
 
         .close-modal {
@@ -319,6 +302,7 @@
             text-shadow: 0 1px 3px rgba(0,0,0,0.5);
         }
 
+        /* Mobile Optimization */
         @media (max-width: 768px) {
             .top-nav {
                 padding: 15px 20px;
@@ -390,6 +374,7 @@
                 align-items: center;
             }
 
+            .word-count-container,
             #wordCountContainer {
                 font-size: 0.85rem;
             }
@@ -470,12 +455,7 @@
     </div>
 
     <div class="app-box">
-        <textarea
-            id="inputText"
-            class="input-area"
-            placeholder="Paste Your AI Generated Content Here..."
-            oninput="updateWordCount()"
-        ></textarea>
+        <textarea id="inputText" class="input-area" placeholder="Paste Your AI Generated Content Here..." oninput="updateWordCount()"></textarea>
 
         <div class="controls">
             <div id="wordCountContainer">
@@ -495,6 +475,7 @@
         </div>
     </div>
 
+    <!-- Modals -->
     <div id="howItWorksModal" class="modal-overlay">
         <div class="modal-content">
             <span class="close-modal" onclick="playSound(); closeModal('howItWorksModal')">&times;</span>
@@ -514,7 +495,7 @@
             <h2>Help & Tips</h2>
             <p style="text-align: left;">
                 • Word Limit: 200 words per request.<br>
-                • If you see server busy error, wait 10 seconds and try again.<br>
+                • If you see server busy error, please wait 10 seconds and try again.<br>
                 • Ensure your text is clear for best results.
             </p>
         </div>
@@ -557,7 +538,7 @@
         function getWordCount(text) {
             return text.trim().split(/\s+/).filter(Boolean).length;
         }
-        
+
         function updateWordCount() {
             const inputText = document.getElementById("inputText");
             const wordCount = getWordCount(inputText.value);
@@ -609,8 +590,46 @@
             }, 2000);
         }
 
+        function isAppOrLocal() {
+            const protocol = window.location.protocol;
+            const hostname = window.location.hostname;
+
+            if (window.Capacitor !== undefined) {
+                return true;
+            }
+
+            if (protocol === "capacitor:" || protocol === "file:") {
+                return true;
+            }
+
+            if (hostname === "localhost" || hostname === "127.0.0.1" || hostname === "") {
+                return true;
+            }
+
+            return false;
+        }
+
         function getApiUrl() {
-            return LIVE_API_URL;
+            if (isAppOrLocal()) {
+                return LIVE_API_URL;
+            }
+
+            return "/api/humanize";
+        }
+
+        async function readJsonResponse(response) {
+            const rawText = await response.text();
+
+            try {
+                return JSON.parse(rawText);
+            } catch (error) {
+                throw new Error(
+                    "Server returned invalid response. Status: " +
+                    response.status +
+                    ". Response: " +
+                    rawText.slice(0, 120)
+                );
+            }
         }
 
         async function humanizeText() {
@@ -651,26 +670,27 @@
                     })
                 });
 
-                let data = {};
-
-                try {
-                    data = await response.json();
-                } catch (jsonError) {
-                    throw new Error("Invalid server response");
-                }
+                const data = await readJsonResponse(response);
 
                 if (!response.ok) {
-                    resultBox.innerHTML = "<span style='color: red;'>❌ Error: " + (data.error || "API request failed") + "</span>";
+                    resultBox.innerHTML =
+                        "<span style='color: red;'>❌ Error: " +
+                        (data.error || "API request failed") +
+                        "</span>";
                     return;
                 }
 
                 if (data.error) {
-                    resultBox.innerHTML = "<span style='color: red;'>❌ Error: " + data.error + "</span>";
+                    resultBox.innerHTML =
+                        "<span style='color: red;'>❌ Error: " +
+                        data.error +
+                        "</span>";
                     return;
                 }
 
                 if (!data.result) {
-                    resultBox.innerHTML = "<span style='color: red;'>❌ No result returned from API.</span>";
+                    resultBox.innerHTML =
+                        "<span style='color: red;'>❌ No result returned from API.</span>";
                     return;
                 }
 
@@ -678,7 +698,11 @@
 
             } catch (error) {
                 console.error(error);
-                resultBox.innerHTML = "<span style='color: red;'>❌ Network or API Error! Make sure you have internet connection.</span>";
+
+                resultBox.innerHTML =
+                    "<span style='color: red;'>❌ Network/API Error: " +
+                    error.message +
+                    "</span>";
             } finally {
                 humanizeBtn.disabled = false;
                 humanizeBtn.innerText = "Humanize ✦";
