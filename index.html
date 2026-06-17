@@ -71,6 +71,7 @@
         .nav-links {
             display: flex;
             gap: 30px;
+            align-items: center;
         }
 
         .nav-links a {
@@ -78,10 +79,26 @@
             text-decoration: none;
             font-size: 0.9rem;
             font-weight: 500;
-            transition: opacity 0.3s;
+            transition: all 0.3s;
         }
 
         .nav-links a:hover { opacity: 0.7; }
+
+        /* Transparent BUY VPNS Button */
+        .nav-vpn-btn {
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            padding: 6px 18px;
+            border-radius: 20px;
+            font-weight: 600 !important;
+            letter-spacing: 0.5px;
+        }
+        .nav-vpn-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.8);
+        }
 
         /* ------------------
            Hero Section 
@@ -108,7 +125,7 @@
             margin-top: 15px;
             cursor: pointer;
             box-shadow: 0 10px 20px rgba(0,0,0,0.15);
-            transition: transform 0.1s; /* වේගවත් කරා Sound එකට ගැලපෙන්න */
+            transition: transform 0.1s; 
         }
         .hero-btn:active { transform: scale(0.95); }
 
@@ -122,7 +139,7 @@
             max-width: 950px; 
             padding: 25px 35px; 
             box-shadow: 0 25px 60px rgba(0,0,0,0.1); 
-            margin-bottom: 20px;
+            margin-bottom: 50px;
         }
 
         .box-top-bar {
@@ -188,42 +205,50 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
 
         /* ------------------
-           Contact & Footer Section
+           Contact Popup Modal
            ------------------ */
-        .footer-section {
-            width: 90%;
-            max-width: 950px;
-            background: rgba(255, 255, 255, 0.4);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-radius: 16px;
-            padding: 20px 30px;
-            display: flex;
-            justify-content: space-between;
+        .modal-overlay {
+            display: none; 
+            position: fixed; 
+            top: 0; left: 0; 
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            justify-content: center; 
             align-items: center;
-            margin-bottom: 30px;
-            color: #222;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            flex-wrap: wrap;
-            gap: 15px;
         }
 
-        .contact-info { font-size: 0.85rem; line-height: 1.5; font-weight: 500; }
-        .contact-info span { color: #555; }
-        .contact-info strong { color: #111; }
-
-        .vpn-link {
-            background: #4a90e2;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.85rem;
-            transition: all 0.2s;
-            box-shadow: 0 4px 10px rgba(74, 144, 226, 0.3);
+        .modal-content {
+            background: #fff;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            position: relative;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            animation: popIn 0.3s ease-out forwards;
         }
-        .vpn-link:hover { background: #357abd; transform: translateY(-2px); }
+
+        @keyframes popIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px; right: 20px;
+            font-size: 1.8rem;
+            color: #888;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .close-modal:hover { color: #e74c3c; }
+
+        .modal-content h2 { margin-top: 0; color: #111; font-weight: 600; }
+        .modal-content p { color: #555; line-height: 1.6; font-size: 1.05rem; margin-bottom: 10px; }
+        .modal-content strong { color: #111; font-size: 1.1rem; }
 
         .oska-brand {
             position: fixed;
@@ -246,12 +271,12 @@
             .app-box { width: 95%; padding: 20px; }
             .controls { flex-direction: column; gap: 20px; align-items: flex-start; }
             .btn-group { width: 100%; display: flex; justify-content: flex-end; flex-wrap: wrap; }
-            .footer-section { flex-direction: column; text-align: center; justify-content: center; width: 95%; }
         }
     </style>
 </head>
 <body>
 
+    <!-- Pop Sound Effect -->
     <audio id="popSound" src="https://assets.mixkit.co/active_storage/sfx/212/212-preview.mp3" preload="auto"></audio>
 
     <header class="top-nav">
@@ -260,9 +285,12 @@
             oskaai
         </div>
         <nav class="nav-links">
-            <a href="#">How It Works</a>
-            <a href="#">Help</a>
-            <a href="#">Contact</a>
+            <a href="#" onclick="playSound()">How It Works</a>
+            <a href="#" onclick="playSound()">Help</a>
+            <!-- Contact Modal Trigger -->
+            <a href="#" onclick="playSound(); openContactModal(); return false;">Contact</a>
+            <!-- Transparent BUY VPNS Button -->
+            <a href="https://www.oskavpn.codes" target="_blank" class="nav-vpn-btn" onclick="playSound()">BUY VPNS ↗</a>
         </nav>
     </header>
 
@@ -298,12 +326,17 @@
         </div>
     </div>
 
-    <div class="footer-section">
-        <div class="contact-info">
-            <strong>Oshadha Perera</strong> | SRILANKA <br>
-            <span>📞 0754565755</span> &nbsp;|&nbsp; <span>✉️ oshadahperera500@gmail.com</span>
+    <!-- Contact Popup Modal (Hidden by default) -->
+    <div id="contactModal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-modal" onclick="playSound(); closeContactModal();">&times;</span>
+            <h2>Contact Details</h2>
+            <p style="margin-top: 20px;">
+                <strong>Oshadha Perera</strong> <br> SRILANKA
+            </p>
+            <p>📞 0754565755</p>
+            <p>✉️ oshadahperera500@gmail.com</p>
         </div>
-        <a href="https://www.oskavpn.codes" target="_blank" class="vpn-link" onclick="playSound()">Buy VPNs ↗</a>
     </div>
 
     <div class="oska-brand">Powered by oska.tech</div>
@@ -311,11 +344,19 @@
     <script>
         const MAX_WORDS = 200;
 
-        // Sound ප්ලේ කරන Function එක
         function playSound() {
             const sound = document.getElementById("popSound");
-            sound.currentTime = 0; // හැමතිස්සෙම මුල ඉඳන් ප්ලේ වෙන්න
-            sound.play().catch(error => console.log("Audio play prevented by browser"));
+            sound.currentTime = 0; 
+            sound.play().catch(error => console.log("Audio play prevented"));
+        }
+
+        // Modal Functions
+        function openContactModal() {
+            document.getElementById('contactModal').style.display = 'flex';
+        }
+
+        function closeContactModal() {
+            document.getElementById('contactModal').style.display = 'none';
         }
 
         function updateWordCount() {
