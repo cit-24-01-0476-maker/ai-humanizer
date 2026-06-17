@@ -1,59 +1,98 @@
 export default async function handler(req, res) {
-    // CORS Headers: App එකෙන් එන Request වලට ඉඩ දීම
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, POST, GET');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  // Allow browser requests
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-    // Preflight OPTIONS request එකට පිළිතුරු දීම
-    if (req.method === 'OPTIONS') {
-        return res.status(200).end();
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
+  if (req.method !== 'POST') {
+    return res.status(405).json({
+      error: 'Only POST requests are allowed'
+    });
+  }
+
+  try {
+    const { text } = req.body || {};
+
+    if (!text || typeof text !== 'string' || !text.trim()) {
+      return res.status(400).json({
+        error: 'Text is required'
+      });
     }
 
-    // POST request එකක් පමණක් බාර ගැනීම
-    if (req.method !== 'POST') {
-        return res.status(405).json({ error: 'Method Not Allowed' });
+    const apiKey = process.env.GEMINI_API_KEY;
+
+    if (!apiKey) {
+      return res.status(500).json({
+        error: 'GEMINI_API_KEY is missing. Add it in your environment variables.'
+      });
     }
 
-    try {
-        const { text } = req.body;
-        
-        if (!text) {
-            return res.status(400).json({ error: 'Text is required' });
-        }
+    // Fixed model name
+    const model = 'gemini-3.5-flash';
 
-        const apiKey = process.env.GEMINI_API_KEY;
-        
-        // ස්ථායී මොඩල් නම භාවිතා කිරීම
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
-        const prompt = `Rewrite the following text to make it sound completely natural, conversational, and written by a real human. Remove any AI-sounding tone. Text: ${text}`;
+    const prompt = `
+Rewrite the following text to make it sound natural, simple, and human-written.
+Keep the original meaning.
+Do not add extra information.
+Do not make it too advanced.
 
-        const response = await fetch(apiUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                contents: [{
-                    parts: [{ text: prompt }]
-                }]
-            })
-        });
+Text:
+${text}
+`;
 
-        const data = await response.json();
-        
-        if (!response.ok) {
-            return res.status(response.status).json({ 
-                error: data.error?.message || 'API Error', 
-                code: response.status 
-            });
-        }
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        contents: [
+          {
+            parts: [
+              {
+                text: prompt
+              }
+            ]
+          }
+        ]
+      })
+    });
 
-        // ප්‍රතිඵලය ලබා ගැනීම
-        const result = data.candidates[0].content.parts[0].text;
-        
-        res.status(200).json({ result: result });
+    const data = await response.json();
 
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Something went wrong! Please try again.' });
+    if (!response.ok) {
+      console.error('Gemini API Error:', data);
+
+      return res.status(response.status).json({
+        error: data.error?.message || 'Gemini API error',
+        code: response.status
+      });
     }
+
+    const result =
+      data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+
+    if (!result) {
+      return res.status(500).json({
+        error: 'No text returned from Gemini API'
+      });
+    }
+
+    return res.status(200).json({
+      result
+    });
+
+  } catch (error) {
+    console.error('Server Error:', error);
+
+    return res.status(500).json({
+      error: 'Something went wrong! Please try again.'
+    });
+  }
 }
