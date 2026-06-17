@@ -7,12 +7,12 @@ module.exports = async function handler(req, res) {
     const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
-        return res.status(500).json({ error: 'API Key එක Vercel එකට සම්බන්ධ වෙලා නැහැ! Settings > Environment Variables චෙක් කරන්න.' });
+        return res.status(500).json({ error: 'API Key එක Vercel එකට සම්බන්ධ වෙලා නැහැ!' });
     }
 
     try {
-        // මෙතන තමයි වෙනස කරේ - Model එකේ නම "gemini-1.5-flash-latest" විදියට යාවත්කාලීන කරලා තියෙන්නේ
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`, {
+        // මෙතන තමයි වෙනස: ලෝකේ ඕනෑම තැනකට වැඩ කරන "gemini-pro" Model එකට මාරු කළා.
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
