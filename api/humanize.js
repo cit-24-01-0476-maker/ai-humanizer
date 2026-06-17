@@ -23,7 +23,9 @@ export default async function handler(req, res) {
 
         // 2. Google Gemini API එකට කතා කිරීම
         const apiKey = process.env.GEMINI_API_KEY; // ඔයාගේ Vercel එකේ තියෙන API Key එක
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+        
+        // මෙන්න මේ ලින්ක් එක තමයි අපි අලුතින් Update කළේ (gemini-1.5-flash-latest)
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
 
         const prompt = `Rewrite the following text to make it sound completely natural, conversational, and written by a real human. Remove any AI-sounding tone. Text: ${text}`;
 
