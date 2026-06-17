@@ -9,7 +9,6 @@
     <style>
         * { box-sizing: border-box; }
         
-        /* Moving Cloud Background Animation */
         body { 
             margin: 0; 
             font-family: 'Inter', sans-serif; 
@@ -19,10 +18,8 @@
             flex-direction: column; 
             align-items: center; 
             padding: 40px 20px; 
-            
-            /* ඔයාගේ පින්තූරය මෙතනින් සම්බන්ධ වේ */
             background-image: url('bg.jpg'); 
-            background-size: 120% 120%; /* Animation එකට ඉඩ තියන්න ටිකක් ලොකු කරලා තියෙන්නේ */
+            background-size: 120% 120%; 
             background-position: center;
             background-attachment: fixed;
             animation: moveClouds 40s linear infinite alternate;
@@ -33,22 +30,9 @@
             100% { background-position: 100% 50%; }
         }
 
-        /* 3D Bubbles Animation */
-        .bubbles-container {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: -1;
-            overflow: hidden;
-        }
-        .bubble {
-            position: absolute;
-            bottom: -100px;
-            background: radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.1));
-            border-radius: 50%;
-            box-shadow: inset 0 0 20px rgba(255,255,255,0.6), 0 10px 20px rgba(0,0,0,0.1);
-            animation: rise infinite ease-in;
-        }
+        /* 3D Bubbles */
+        .bubbles-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; overflow: hidden; }
+        .bubble { position: absolute; bottom: -100px; background: radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.1)); border-radius: 50%; box-shadow: inset 0 0 20px rgba(255,255,255,0.6), 0 10px 20px rgba(0,0,0,0.1); animation: rise infinite ease-in; }
         .bubble:nth-child(1) { width: 60px; height: 60px; left: 15%; animation-duration: 8s; }
         .bubble:nth-child(2) { width: 120px; height: 120px; left: 35%; animation-duration: 12s; animation-delay: 2s; }
         .bubble:nth-child(3) { width: 40px; height: 40px; left: 65%; animation-duration: 6s; animation-delay: 1s; }
@@ -61,13 +45,12 @@
             100% { bottom: 110vh; transform: translateX(-30px) scale(1); opacity: 0; }
         }
 
-        /* Hero Section */
         .hero { text-align: center; color: white; margin-bottom: 40px; margin-top: 20px; text-shadow: 0 4px 15px rgba(0,0,0,0.4); }
         .hero h1 { font-size: 3.8rem; font-weight: 300; margin: 0; }
         .hero h1 span { font-family: 'Playfair Display', serif; font-style: italic; font-weight: 600; }
         .hero p { font-size: 1.2rem; opacity: 0.95; max-width: 500px; margin: 15px auto; line-height: 1.5; font-weight: 400; }
 
-        /* Glassmorphism App Box */
+        /* Premium App Box */
         .app-box { 
             background: rgba(255, 255, 255, 0.7); 
             backdrop-filter: blur(20px);
@@ -102,9 +85,12 @@
             border-top: 1px solid rgba(0,0,0,0.1); 
             margin-top: 10px;
         }
-        .word-count { font-size: 0.95rem; color: #444; font-weight: 600; }
         
-        .btn-group { display: flex; gap: 10px; }
+        /* Word Count Limit Styling */
+        .word-count-container { font-size: 0.95rem; color: #444; font-weight: 600; transition: color 0.3s; }
+        .over-limit { color: #e74c3c !important; }
+
+        .btn-group { display: flex; gap: 10px; align-items: center; }
         .btn { 
             padding: 12px 24px; 
             border-radius: 30px; 
@@ -113,13 +99,23 @@
             font-size: 0.95rem; 
             font-weight: 600; 
             transition: all 0.3s; 
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
+        
         .btn-outline { background: rgba(255,255,255,0.6); border: 1px solid rgba(0,0,0,0.1); color: #333; }
         .btn-outline:hover { background: rgba(255,255,255,0.9); }
+        
+        /* Clear Button Styling */
+        .btn-clear { background: rgba(255,255,255,0.5); border: 1px solid rgba(231, 76, 60, 0.3); color: #e74c3c; }
+        .btn-clear:hover { background: rgba(231, 76, 60, 0.1); border-color: #e74c3c; }
+
         .btn-black { background: #111; color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
         .btn-black:hover { background: #333; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.4); }
-        .btn-black:disabled { background: #888; cursor: not-allowed; transform: none; }
+        .btn-black:disabled { background: #888; cursor: not-allowed; transform: none; box-shadow: none; }
 
+        /* Animation for Result Box */
         .result-box { 
             margin-top: 25px; 
             background: rgba(255,255,255,0.8); 
@@ -131,39 +127,31 @@
             line-height: 1.6; 
             white-space: pre-wrap;
             box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .trust-section { margin-top: 50px; text-align: center; width: 100%; max-width: 800px; background: rgba(255,255,255,0.6); backdrop-filter: blur(10px); padding: 30px; border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
         .trust-section p { color: #444; font-size: 0.95rem; font-style: italic; margin-bottom: 20px; font-weight: 600; }
         .badges { display: flex; gap: 30px; justify-content: center; flex-wrap: wrap; opacity: 0.7; font-weight: bold; font-size: 1.2rem; color: #222; }
         
-        /* Footer / Powered By */
-        .footer {
-            margin-top: auto;
-            padding: 30px 20px 10px 20px;
-            color: white;
-            font-weight: 600;
-            letter-spacing: 1.5px;
-            text-shadow: 0 2px 8px rgba(0,0,0,0.5);
-            font-size: 0.9rem;
-            text-transform: uppercase;
-        }
+        .footer { margin-top: auto; padding: 30px 20px 10px 20px; color: white; font-weight: 600; letter-spacing: 1.5px; text-shadow: 0 2px 8px rgba(0,0,0,0.5); font-size: 0.9rem; text-transform: uppercase; }
         
         @media (max-width: 600px) {
             .hero h1 { font-size: 2.8rem; }
             .controls { flex-direction: column; gap: 15px; align-items: flex-start; }
-            .btn-group { width: 100%; display: flex; justify-content: space-between; flex-wrap: wrap; }
+            .btn-group { width: 100%; display: flex; justify-content: flex-end; flex-wrap: wrap; }
         }
     </style>
 </head>
 <body>
 
     <div class="bubbles-container">
-        <div class="bubble"></div>
-        <div class="bubble"></div>
-        <div class="bubble"></div>
-        <div class="bubble"></div>
-        <div class="bubble"></div>
+        <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
     </div>
 
     <div class="hero">
@@ -175,10 +163,16 @@
         <textarea id="inputText" class="input-area" placeholder="Paste Your AI Generated Content Here..." oninput="updateWordCount()"></textarea>
         
         <div class="controls">
-            <div class="word-count"><span id="wordCount">0</span> words</div>
+            <!-- Word Count 200 Limit Display -->
+            <div id="wordCountContainer" class="word-count-container">
+                <span id="wordCount">0</span> / 200 words
+            </div>
+            
             <div class="btn-group">
-                <button class="btn btn-outline">Check For AI</button>
-                <button class="btn btn-outline" style="font-weight: bold; color: #0056b3;">v.1 oskaai</button>
+                <!-- Clear Button -->
+                <button class="btn btn-clear" onclick="clearText()" title="Clear text">Clear ✕</button>
+                
+                <button class="btn btn-outline" style="font-weight: bold; color: #0056b3; pointer-events: none;">v.1 oskaai</button>
                 <button class="btn btn-black" id="humanizeBtn" onclick="humanizeText()">Humanize ✦</button>
             </div>
         </div>
@@ -189,31 +183,61 @@
     <div class="trust-section">
         <p>Bypass AI content detectors</p>
         <div class="badges">
-            <span>Copyleaks</span>
-            <span>grammarly</span>
-            <span>Turnitin</span>
-            <span>ZeroGPT</span>
+            <span>Copyleaks</span><span>grammarly</span><span>Turnitin</span><span>ZeroGPT</span>
         </div>
     </div>
 
-    <div class="footer">
-        Powered by oska.tech
-    </div>
+    <div class="footer">Powered by oska.tech</div>
 
     <script>
+        const MAX_WORDS = 200;
+
         function updateWordCount() {
-            const text = document.getElementById("inputText").value;
-            const words = text.trim().split(/\s+/).filter(word => word.length > 0).length;
-            document.getElementById("wordCount").innerText = words;
+            const text = document.getElementById("inputText").value.trim();
+            // හිස් නම් 0 පෙන්වන්න, නැත්නම් හිස්තැන් වලින් වචන ගණන් කරන්න
+            const words = text === "" ? 0 : text.split(/\s+/).length;
+            
+            const wordCountSpan = document.getElementById("wordCount");
+            const wordCountContainer = document.getElementById("wordCountContainer");
+            const humanizeBtn = document.getElementById("humanizeBtn");
+
+            wordCountSpan.innerText = words;
+
+            // වචන 200 පැන්නොත්
+            if (words > MAX_WORDS) {
+                wordCountContainer.classList.add("over-limit");
+                humanizeBtn.disabled = true;
+                humanizeBtn.innerText = "Over Limit 🚫";
+            } else {
+                wordCountContainer.classList.remove("over-limit");
+                humanizeBtn.disabled = false;
+                humanizeBtn.innerText = "Humanize ✦";
+            }
+        }
+
+        // ටයිප් කරපු ඒවා මකන (Clear) Function එක
+        function clearText() {
+            document.getElementById("inputText").value = "";
+            const resultBox = document.getElementById("resultBox");
+            resultBox.style.display = "none";
+            resultBox.innerHTML = "";
+            updateWordCount();
         }
 
         async function humanizeText() {
-            const text = document.getElementById("inputText").value;
+            const text = document.getElementById("inputText").value.trim();
             const resultBox = document.getElementById("resultBox");
             const btn = document.getElementById("humanizeBtn");
 
-            if (!text) {
+            const words = text === "" ? 0 : text.split(/\s+/).length;
+
+            if (words === 0) {
                 alert("Please paste some text first!");
+                return;
+            }
+
+            if (words > MAX_WORDS) {
+                alert("Please limit your text to maximum " + MAX_WORDS + " words!");
                 return;
             }
 
