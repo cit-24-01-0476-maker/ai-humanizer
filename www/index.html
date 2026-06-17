@@ -73,45 +73,30 @@
         
         .oska-brand { position: fixed; bottom: 15px; right: 20px; color: rgba(255,255,255,0.8); font-size: 0.75rem; font-weight: 600; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
 
-        /* =========================================
-           MOBILE OPTIMIZATION (ෆෝන් එකට ගැලපෙන සැකසුම්)
-           ========================================= */
+        /* Mobile Optimization */
         @media (max-width: 768px) {
-            /* Navigation Mobile View */
             .top-nav { padding: 15px 20px; flex-direction: column; gap: 15px; background: rgba(255,255,255,0.05); backdrop-filter: blur(5px); }
             .nav-logo { font-size: 1.1rem; }
             .live-logo { width: 35px; height: 35px; }
             .nav-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; width: 100%; }
             .nav-links a { font-size: 0.85rem; }
             .nav-vpn-btn { padding: 6px 14px; font-size: 0.8rem; }
-
-            /* Hero Mobile View */
             .hero { margin-top: 160px; margin-bottom: 30px; }
             .hero h1 { font-size: 2.6rem; }
             .hero p { font-size: 0.95rem; }
             .hero-btn { padding: 14px 35px; font-size: 0.9rem; }
-
-            /* App Box Mobile View */
             .app-box { width: 95%; padding: 20px; border-radius: 15px; margin-bottom: 80px; }
             .input-area { height: 160px; font-size: 1rem; }
-            
-            /* Controls Mobile View (Grid Layout for buttons) */
             .controls { flex-direction: column; gap: 20px; align-items: center; }
             .word-count-container { font-size: 0.85rem; }
             .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
             .btn { font-size: 0.85rem; padding: 10px; width: 100%; }
-            .btn-black { grid-column: span 2; padding: 14px; font-size: 0.95rem; } /* Humanize බොත්තම ලොකුවට යටින් */
-
-            /* Result Box Mobile View */
+            .btn-black { grid-column: span 2; padding: 14px; font-size: 0.95rem; } 
             .result-box { padding: 20px 20px 60px 20px; font-size: 1rem; }
             .copy-btn { font-size: 0.8rem; padding: 6px 12px; }
-
-            /* Modal Mobile View */
             .modal-content { padding: 25px 20px; }
             .modal-content h2 { font-size: 1.3rem; }
             .modal-content p { font-size: 0.95rem; }
-
-            /* Brand text Mobile View */
             .oska-brand { position: static; text-align: center; margin-bottom: 20px; width: 100%; font-size: 0.7rem; }
         }
     </style>
@@ -135,7 +120,7 @@
     <div class="hero">
         <h1>AI wrote it.<br>We <span>Humanize</span> it</h1>
         <p>School, socials, DMs, or your hustle — rewrite any AI-sounding text into your true voice.</p>
-        <button class="hero-btn" onclick="playSound()">Get Mobile APK</button>
+        <a href="ezyhumernzi.apk" download class="hero-btn" onclick="playSound()" style="text-decoration: none; display: inline-block;">Get Mobile APK</a>
     </div>
 
     <div class="app-box">
@@ -189,17 +174,24 @@
             const text = document.getElementById("inputText").value.trim();
             if (!text) return;
             document.getElementById("humanizeBtn").innerText = "Humanizing... ⏳";
-            const response = await fetch('/api/humanize', {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ text })
-            });
-            const data = await response.json();
             
-            if (data.error && data.error.code === 503) {
-                document.getElementById("resultBox").innerHTML = "<span style='color: #e74c3c;'>Google AI සර්වර් එක මේ වෙලාවේ ගොඩක් කාර්යබහුලයි. කරුණාකර තත්පර 10කින් ආයෙත් ඔබන්න! ⏳</span>";
-            } else {
-                document.getElementById("resultBox").innerHTML = data.result || "<span style='color: red;'>❌ Error: " + data.error + "</span>";
+            try {
+                // මෙතන තමයි ඔයාගේ ඇත්තම Vercel URL එක සම්බන්ධ කරලා තියෙන්නේ. මේකෙන් Android App එකටත් AI එක වැඩ කරනවා!
+                const response = await fetch('https://ai-humanizer-git-main-oshadhapereras-projects.vercel.app/api/humanize', {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ text })
+                });
+                const data = await response.json();
+                
+                if (data.error && data.error.code === 503) {
+                    document.getElementById("resultBox").innerHTML = "<span style='color: #e74c3c;'>Google AI සර්වර් එක මේ වෙලාවේ ගොඩක් කාර්යබහුලයි. කරුණාකර තත්පර 10කින් ආයෙත් ඔබන්න! ⏳</span>";
+                } else {
+                    document.getElementById("resultBox").innerHTML = data.result || "<span style='color: red;'>❌ Error: " + data.error + "</span>";
+                }
+            } catch (error) {
+                document.getElementById("resultBox").innerHTML = "<span style='color: red;'>❌ Network or API Error! Make sure you have internet connection.</span>";
+                console.error(error);
             }
 
             document.getElementById("resultWrapper").style.display = "block";
