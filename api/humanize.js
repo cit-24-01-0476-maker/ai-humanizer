@@ -1,5 +1,4 @@
 export default async function handler(req, res) {
-  // Allow browser requests
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -27,12 +26,11 @@ export default async function handler(req, res) {
 
     if (!apiKey) {
       return res.status(500).json({
-        error: 'GEMINI_API_KEY is missing. Add it in your environment variables.'
+        error: 'GEMINI_API_KEY is missing'
       });
     }
 
-    // Fixed model name
-    const model = 'gemini-3.5-flash';
+    const model = 'gemini-2.5-flash';
 
     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
@@ -55,9 +53,7 @@ ${text}
         contents: [
           {
             parts: [
-              {
-                text: prompt
-              }
+              { text: prompt }
             ]
           }
         ]
@@ -75,8 +71,7 @@ ${text}
       });
     }
 
-    const result =
-      data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+    const result = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
 
     if (!result) {
       return res.status(500).json({
