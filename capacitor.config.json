@@ -5,12 +5,6 @@
   "bundledWebRuntime": false,
   "server": {
     "url": "https://ezyhumernzi.ai.oskaa.tech",
-    "cleartext": false,
-    "allowNavigation": [
-      "ezyhumernzi.ai.oskaa.tech",
-      "*.oskaa.tech",
-      "oskavpn.codes",
-      "www.oskavpn.codes"
-    ]
+    "cleartext": false
   }
 }
