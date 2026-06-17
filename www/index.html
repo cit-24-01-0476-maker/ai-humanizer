@@ -5,13 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ezyhumernzi.AI</title>
 
-    <!-- Tab Logo -->
     <link rel="icon" type="image/gif" href="logo.gif">
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@1,600&display=swap" rel="stylesheet">
     
     <style>
-        * { box-sizing: border-box; }
+        * {
+            box-sizing: border-box;
+        }
         
         body { 
             margin: 0; 
@@ -29,8 +30,13 @@
         }
 
         @keyframes moveClouds {
-            0% { background-position: 0% 20%; }
-            100% { background-position: 100% 80%; }
+            0% {
+                background-position: 0% 20%;
+            }
+
+            100% {
+                background-position: 100% 80%;
+            }
         }
 
         .top-nav {
@@ -157,9 +163,17 @@
         }
 
         @keyframes floatEffect {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
+            0% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+
+            100% {
+                transform: translateY(0px);
+            }
         }
 
         .input-area {
@@ -276,8 +290,15 @@
         }
 
         @keyframes popIn {
-            from { transform: scale(0.8); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
         }
 
         .close-modal {
@@ -493,7 +514,7 @@
             <h2>Help & Tips</h2>
             <p style="text-align: left;">
                 • Word Limit: 200 words per request.<br>
-                • If you see '503 High Demand' error, please wait 10 seconds and try again.<br>
+                • If you see server busy error, wait 10 seconds and try again.<br>
                 • Ensure your text is clear for best results.
             </p>
         </div>
@@ -519,8 +540,9 @@
 
         function playSound() {
             const sound = document.getElementById("popSound");
+
             if (sound) {
-                sound.play().catch(() => {});
+                sound.play().catch(function () {});
             }
         }
 
@@ -563,47 +585,32 @@
         async function copyText() {
             const text = document.getElementById("resultBox").innerText;
 
-            if (!text) return;
-
-            await navigator.clipboard.writeText(text);
+            if (!text) {
+                return;
+            }
 
             const btn = document.getElementById("copyBtn");
-            btn.innerText = "Copied! ✔";
 
-            setTimeout(() => {
+            try {
+                await navigator.clipboard.writeText(text);
+                btn.innerText = "Copied! ✔";
+            } catch (error) {
+                const tempTextArea = document.createElement("textarea");
+                tempTextArea.value = text;
+                document.body.appendChild(tempTextArea);
+                tempTextArea.select();
+                document.execCommand("copy");
+                document.body.removeChild(tempTextArea);
+                btn.innerText = "Copied! ✔";
+            }
+
+            setTimeout(function () {
                 btn.innerText = "Copy Text 📋";
             }, 2000);
         }
 
         function getApiUrl() {
-            const protocol = window.location.protocol;
-            const hostname = window.location.hostname;
-
-            const isCapacitorApp =
-                protocol === "capacitor:" ||
-                protocol === "file:" ||
-                window.location.href.includes("capacitor") ||
-                window.Capacitor !== undefined;
-
-            const isLocalhost =
-                hostname === "localhost" ||
-                hostname === "127.0.0.1" ||
-                hostname === "";
-
-            /*
-                Website:
-                - Vercel website eken run wenakota /api/humanize use karanawa.
-
-                Android APK / Capacitor app:
-                - App eke /api/humanize wada karanne na.
-                - App ekata full Vercel API URL eka use karanawa.
-            */
-
-            if (isCapacitorApp || isLocalhost) {
-                return LIVE_API_URL;
-            }
-
-            return "/api/humanize";
+            return LIVE_API_URL;
         }
 
         async function humanizeText() {
@@ -629,18 +636,19 @@
 
             humanizeBtn.disabled = true;
             humanizeBtn.innerText = "Humanizing... ⏳";
+
             resultWrapper.style.display = "block";
             resultBox.innerHTML = "Please wait... ⏳";
 
             try {
-                const apiUrl = getApiUrl();
-
-                const response = await fetch(apiUrl, {
+                const response = await fetch(getApiUrl(), {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
                     },
-                    body: JSON.stringify({ text })
+                    body: JSON.stringify({
+                        text: text
+                    })
                 });
 
                 let data = {};
@@ -652,11 +660,7 @@
                 }
 
                 if (!response.ok) {
-                    if (response.status === 503) {
-                        resultBox.innerHTML = "<span style='color: #e74c3c;'>Google AI server eka me welawe busy. Please wait 10 seconds and try again. ⏳</span>";
-                    } else {
-                        resultBox.innerHTML = "<span style='color: red;'>❌ Error: " + (data.error || "API request failed") + "</span>";
-                    }
+                    resultBox.innerHTML = "<span style='color: red;'>❌ Error: " + (data.error || "API request failed") + "</span>";
                     return;
                 }
 
