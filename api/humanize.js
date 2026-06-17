@@ -7,6 +7,7 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
 
+  // Browser eken API eka test karanna
   if (req.method === "GET") {
     return res.status(200).json({
       ok: true,
@@ -43,10 +44,6 @@ export default async function handler(req, res) {
       });
     }
 
-    const model = "gemini-2.5-flash";
-
-    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-
     const prompt = `
 Rewrite the following text to make it sound natural, simple, and human-written.
 Keep the original meaning.
@@ -58,60 +55,101 @@ Text:
 ${text}
 `;
 
-    const geminiResponse = await fetch(apiUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        contents: [
-          {
-            parts: [
-              {
-                text: prompt
+    // High demand error avoid karanna fallback models
+    const models = [
+      "gemini-2.5-flash-lite",
+      "gemini-2.5-flash",
+      "gemini-3.5-flash"
+    ];
+
+    let lastErrorMessage = "Gemini API error";
+
+    for (const model of models) {
+      for (let attempt = 1; attempt <= 2; attempt++) {
+        try {
+          const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+
+          const geminiResponse = await fetch(apiUrl, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              contents: [
+                {
+                  parts: [
+                    {
+                      text: prompt
+                    }
+                  ]
+                }
+              ],
+              generationConfig: {
+                temperature: 0.7,
+                maxOutputTokens: 600
               }
-            ]
+            })
+          });
+
+          const rawText = await geminiResponse.text();
+
+          let data;
+          try {
+            data = JSON.parse(rawText);
+          } catch (parseError) {
+            lastErrorMessage = "Invalid response from Gemini API";
+            continue;
           }
-        ],
-        generationConfig: {
-          temperature: 0.7,
-          maxOutputTokens: 600
+
+          if (!geminiResponse.ok) {
+            const apiError =
+              data.error?.message ||
+              data.error ||
+              "Gemini API request failed";
+
+            lastErrorMessage = apiError;
+
+            console.error(`Gemini error | Model: ${model} | Attempt: ${attempt}`, data);
+
+            const isBusyError =
+              geminiResponse.status === 429 ||
+              geminiResponse.status === 503 ||
+              String(apiError).toLowerCase().includes("high demand") ||
+              String(apiError).toLowerCase().includes("overloaded") ||
+              String(apiError).toLowerCase().includes("quota");
+
+            if (isBusyError) {
+              await wait(900 * attempt);
+              continue;
+            }
+
+            break;
+          }
+
+          const result = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+
+          if (!result) {
+            lastErrorMessage = "No text returned from Gemini API";
+            continue;
+          }
+
+          return res.status(200).json({
+            result: result,
+            model: model
+          });
+
+        } catch (error) {
+          lastErrorMessage = error.message || "Network error";
+          console.error(`Server fetch error | Model: ${model} | Attempt: ${attempt}`, error);
+          await wait(900 * attempt);
         }
-      })
-    });
-
-    const rawText = await geminiResponse.text();
-
-    let data;
-
-    try {
-      data = JSON.parse(rawText);
-    } catch (error) {
-      return res.status(500).json({
-        error: "Invalid response from Gemini API",
-        details: rawText.slice(0, 200)
-      });
+      }
     }
 
-    if (!geminiResponse.ok) {
-      console.error("Gemini API Error:", data);
-
-      return res.status(geminiResponse.status).json({
-        error: data.error?.message || "Gemini API error",
-        code: geminiResponse.status
-      });
-    }
-
-    const result = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
-
-    if (!result) {
-      return res.status(500).json({
-        error: "No text returned from Gemini API"
-      });
-    }
-
-    return res.status(200).json({
-      result: result
+    return res.status(503).json({
+      error:
+        "Gemini models are busy right now. Please wait 10 seconds and try again.",
+      details: lastErrorMessage
     });
 
   } catch (error) {
@@ -122,4 +160,8 @@ ${text}
       details: error.message
     });
   }
+}
+
+function wait(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
