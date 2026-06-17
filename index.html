@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>oskaai - AI Humanizer</title>
+    <!-- Tab එකේ නම -->
+    <title>ezyhumernzi.AI</title>
+    <!-- Tab එකේ පොඩියට පේන Logo එක (Favicon) -->
+    <link rel="icon" type="image/jpeg" href="hypnotherapy.jpg">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@1,600&display=swap" rel="stylesheet">
     
     <style>
         * { box-sizing: border-box; }
         
-        /* ------------------
-           Live Cloud Background
-           ------------------ */
         body { 
             margin: 0; 
             font-family: 'Inter', sans-serif; 
@@ -31,9 +31,6 @@
             100% { background-position: 100% 80%; }
         }
 
-        /* ------------------
-           Top Navigation Bar 
-           ------------------ */
         .top-nav {
             width: 100%;
             padding: 25px 50px;
@@ -49,23 +46,31 @@
         .nav-logo {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             color: white;
             font-weight: 600;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             letter-spacing: 0.5px;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.3);
         }
         
-        .nav-logo-icon {
-            width: 28px;
-            height: 28px;
-            background: white;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #7ab0d6;
-            font-size: 1rem;
+        /* Animated Transparent Logo */
+        .live-logo {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            /* සුදු පසුබිම මකා විනිවිද පෙනෙන ලෙස සෑදීම */
+            mix-blend-mode: multiply; 
+            filter: contrast(1.2);
+            background-color: transparent;
+            /* කැරකෙන Animation එක */
+            animation: hypnoticSpin 8s linear infinite;
+        }
+
+        @keyframes hypnoticSpin {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.1); }
+            100% { transform: rotate(360deg) scale(1); }
         }
 
         .nav-links {
@@ -84,7 +89,6 @@
 
         .nav-links a:hover { opacity: 0.7; }
 
-        /* Transparent BUY VPNS Button */
         .nav-vpn-btn {
             border: 1px solid rgba(255, 255, 255, 0.5);
             background: rgba(255, 255, 255, 0.1);
@@ -100,9 +104,6 @@
             border-color: rgba(255, 255, 255, 0.8);
         }
 
-        /* ------------------
-           Hero Section 
-           ------------------ */
         .hero { 
             text-align: center; 
             color: white; 
@@ -129,32 +130,15 @@
         }
         .hero-btn:active { transform: scale(0.95); }
 
-        /* ------------------
-           Premium App Box 
-           ------------------ */
         .app-box { 
             background: rgba(255, 255, 255, 0.98); 
             border-radius: 20px; 
             width: 90%; 
             max-width: 950px; 
-            padding: 25px 35px; 
+            padding: 35px 35px 25px 35px; /* උඩින් ඉඩ වැඩි කළා */
             box-shadow: 0 25px 60px rgba(0,0,0,0.1); 
             margin-bottom: 50px;
         }
-
-        .box-top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            color: #4a90e2; 
-        }
-        
-        .box-top-bar .icon-stars { font-size: 1rem; }
-        .box-top-bar a { color: #4a90e2; text-decoration: none; display: flex; align-items: center; gap: 5px; }
-        .box-top-bar a:hover { text-decoration: underline; }
 
         .input-area { 
             width: 100%; 
@@ -170,7 +154,6 @@
         }
         .input-area::placeholder { color: #aaa; font-weight: 300; }
 
-        /* Bottom Controls */
         .controls { 
             display: flex; 
             justify-content: space-between; 
@@ -194,7 +177,6 @@
         .btn-black:active { background: #333; transform: scale(0.95); }
         .btn-black:disabled { background: #aaa; cursor: not-allowed; transform: none; }
 
-        /* Result Box & Copy Button */
         .result-wrapper { position: relative; display: none; margin-top: 25px; animation: fadeIn 0.4s ease-in-out; }
         .result-box { background: #f8fbff; border: 1px solid #eef3f9; border-radius: 12px; padding: 25px 25px 50px 25px; font-size: 1.1rem; color: #222; line-height: 1.7; white-space: pre-wrap; min-height: 120px; }
         
@@ -204,65 +186,18 @@
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* ------------------
-           Contact Popup Modal
-           ------------------ */
-        .modal-overlay {
-            display: none; 
-            position: fixed; 
-            top: 0; left: 0; 
-            width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(5px);
-            z-index: 1000;
-            justify-content: center; 
-            align-items: center;
-        }
-
-        .modal-content {
-            background: #fff;
-            padding: 40px;
-            border-radius: 20px;
-            text-align: center;
-            position: relative;
-            max-width: 400px;
-            width: 90%;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
-            animation: popIn 0.3s ease-out forwards;
-        }
-
-        @keyframes popIn {
-            from { transform: scale(0.8); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-
-        .close-modal {
-            position: absolute;
-            top: 15px; right: 20px;
-            font-size: 1.8rem;
-            color: #888;
-            cursor: pointer;
-            transition: color 0.2s;
-        }
+        /* Contact Modal */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(5px); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-content { background: #fff; padding: 40px; border-radius: 20px; text-align: center; position: relative; max-width: 400px; width: 90%; box-shadow: 0 25px 50px rgba(0,0,0,0.3); animation: popIn 0.3s ease-out forwards; }
+        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .close-modal { position: absolute; top: 15px; right: 20px; font-size: 1.8rem; color: #888; cursor: pointer; transition: color 0.2s; }
         .close-modal:hover { color: #e74c3c; }
-
         .modal-content h2 { margin-top: 0; color: #111; font-weight: 600; }
         .modal-content p { color: #555; line-height: 1.6; font-size: 1.05rem; margin-bottom: 10px; }
         .modal-content strong { color: #111; font-size: 1.1rem; }
 
-        .oska-brand {
-            position: fixed;
-            bottom: 15px;
-            right: 20px;
-            color: rgba(255,255,255,0.8);
-            font-size: 0.75rem;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            z-index: 100;
-            text-shadow: 0 1px 3px rgba(0,0,0,0.3);
-        }
+        .oska-brand { position: fixed; bottom: 15px; right: 20px; color: rgba(255,255,255,0.8); font-size: 0.75rem; font-weight: 600; letter-spacing: 0.5px; z-index: 100; text-shadow: 0 1px 3px rgba(0,0,0,0.3); }
 
-        /* Mobile Fixes */
         @media (max-width: 800px) {
             .top-nav { padding: 20px; justify-content: center; }
             .nav-links { display: none; }
@@ -276,20 +211,18 @@
 </head>
 <body>
 
-    <!-- Pop Sound Effect -->
     <audio id="popSound" src="https://assets.mixkit.co/active_storage/sfx/212/212-preview.mp3" preload="auto"></audio>
 
     <header class="top-nav">
         <div class="nav-logo">
-            <div class="nav-logo-icon">✍</div>
-            oskaai
+            <!-- Animated Transparent Logo -->
+            <img src="hypnotherapy.jpg" alt="Logo" class="live-logo">
+            ezyhumernzi.AI
         </div>
         <nav class="nav-links">
             <a href="#" onclick="playSound()">How It Works</a>
             <a href="#" onclick="playSound()">Help</a>
-            <!-- Contact Modal Trigger -->
             <a href="#" onclick="playSound(); openContactModal(); return false;">Contact</a>
-            <!-- Transparent BUY VPNS Button -->
             <a href="https://www.oskavpn.codes" target="_blank" class="nav-vpn-btn" onclick="playSound()">BUY VPNS ↗</a>
         </nav>
     </header>
@@ -301,11 +234,6 @@
     </div>
 
     <div class="app-box">
-        <div class="box-top-bar">
-            <span class="icon-stars">✨</span>
-            <a href="#">Unlock More Than 200 Words With Pro Plan ↗</a>
-        </div>
-
         <textarea id="inputText" class="input-area" placeholder="Paste Your AI Generated Content Here..." oninput="updateWordCount()"></textarea>
         
         <div class="controls">
@@ -326,7 +254,6 @@
         </div>
     </div>
 
-    <!-- Contact Popup Modal (Hidden by default) -->
     <div id="contactModal" class="modal-overlay">
         <div class="modal-content">
             <span class="close-modal" onclick="playSound(); closeContactModal();">&times;</span>
@@ -350,14 +277,8 @@
             sound.play().catch(error => console.log("Audio play prevented"));
         }
 
-        // Modal Functions
-        function openContactModal() {
-            document.getElementById('contactModal').style.display = 'flex';
-        }
-
-        function closeContactModal() {
-            document.getElementById('contactModal').style.display = 'none';
-        }
+        function openContactModal() { document.getElementById('contactModal').style.display = 'flex'; }
+        function closeContactModal() { document.getElementById('contactModal').style.display = 'none'; }
 
         function updateWordCount() {
             const text = document.getElementById("inputText").value.trim();
@@ -398,9 +319,7 @@
                     copyBtn.innerText = "Copy Text 📋";
                     copyBtn.style.background = "white";
                 }, 2000);
-            }).catch(err => {
-                console.error("Failed to copy text: ", err);
-            });
+            }).catch(err => console.error("Failed to copy text: ", err));
         }
 
         async function humanizeText() {
@@ -437,6 +356,11 @@
 
                 const data = await response.json();
                 
+                if (data.error && data.error.code === 503) {
+                    resultBox.innerHTML = "<span style='color: #e74c3c;'>Google AI සර්වර් එක මේ වෙලාවේ ගොඩක් කාර්යබහුලයි. කරුණාකර තත්පර 10කින් ආයෙත් ඔබන්න! ⏳</span>";
+                    return;
+                }
+
                 if(data.result) {
                     resultBox.innerHTML = data.result;
                     copyBtn.style.display = "block"; 
