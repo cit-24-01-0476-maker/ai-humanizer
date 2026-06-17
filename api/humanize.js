@@ -11,8 +11,29 @@ module.exports = async function handler(req, res) {
     }
 
     try {
-        // වෙනස: v1beta වෙනුවට අලුත්ම ස්ථාවර v1 සංස්කරණය සහ gemini-1.5-flash භාවිතා කිරීම
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+        // පියවර 1: ඔයාගේ API Key එකට වැඩ කරන Models මොනවද කියලා Google එකෙන් ඇසීම
+        const modelsResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
+        const modelsData = await modelsResponse.json();
+
+        if (!modelsData.models) {
+            return res.status(500).json({ error: 'Models ලිස්ට් එක ගන්න බැරි වුණා. API Key එකේ අවුලක් වෙන්න පුළුවන්.' });
+        }
+
+        // පියවර 2: වැඩ කරන හොඳම Model එක තනියම තෝරාගැනීම
+        let selectedModel = '';
+        for (const model of modelsData.models) {
+            if (model.supportedGenerationMethods && model.supportedGenerationMethods.includes('generateContent')) {
+                selectedModel = model.name; // උදාහරණයක් විදියට "models/gemini-1.5-flash" තෝරගනීවි
+                if (selectedModel.includes('flash')) break; // Flash එක වේගවත් නිසා ඒක හම්බුණොත් කෙලින්ම ඒක ගන්නවා
+            }
+        }
+
+        if (!selectedModel) {
+            return res.status(500).json({ error: 'ඔයාගේ ගිණුමට ගැලපෙන AI Model එකක් හොයාගන්න බැහැ.' });
+        }
+
+        // පියවර 3: තෝරගත්ත Model එක පාවිච්චි කරලා Text එක Humanize කිරීම
+        const generateResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/${selectedModel}:generateContent?key=${apiKey}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -22,12 +43,12 @@ module.exports = async function handler(req, res) {
             })
         });
 
-        const data = await response.json();
+        const data = await generateResponse.json();
         
         if(data.candidates && data.candidates[0].content.parts[0].text) {
             res.status(200).json({ result: data.candidates[0].content.parts[0].text });
         } else {
-            res.status(500).json({ error: 'Gemini API Error: ' + JSON.stringify(data) });
+            res.status(500).json({ error: 'Generation Error: ' + JSON.stringify(data) });
         }
     } catch (error) {
         res.status(500).json({ error: 'Server Error: ' + error.message });
