@@ -1,49 +1,59 @@
 export default async function handler(req, res) {
-    // CORS Headers (App එකට ඕන නිසා)
+    // CORS Headers: App එකෙන් එන Request වලට ඉඩ දීම
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, POST, GET');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-    if (req.method === 'OPTIONS') return res.status(200).end();
-    if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+    // Preflight OPTIONS request එකට පිළිතුරු දීම
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end();
+    }
 
-    const { text } = req.body;
-    const apiKey = process.env.GEMINI_API_KEY;
+    // POST request එකක් පමණක් බාර ගැනීම
+    if (req.method !== 'POST') {
+        return res.status(405).json({ error: 'Method Not Allowed' });
+    }
 
     try {
-        // පියවර 1: පවතින Models ලැයිස්තුව ගැනීම
-        const modelsResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
-        const modelsData = await modelsResponse.json();
-
-        // පියවර 2: Flash Model එකක් තෝරාගැනීම (වඩාත් ස්ථාවර)
-        const flashModel = modelsData.models.find(m => m.name.includes('gemini-1.5-flash') && m.supportedGenerationMethods.includes('generateContent'));
+        const { text } = req.body;
         
-        if (!flashModel) {
-            return res.status(500).json({ error: 'ගැලපෙන AI Model එකක් හමු නොවීය.' });
+        if (!text) {
+            return res.status(400).json({ error: 'Text is required' });
         }
 
-        // පියවර 3: නිවැරදි URL ආකෘතියෙන් Request කිරීම
-        // මෙතනදී "models/model-name" කියන කොටස URL එකට දානවා
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/${flashModel.name}:generateContent?key=${apiKey}`;
+        const apiKey = process.env.GEMINI_API_KEY;
+        
+        // ස්ථායී මොඩල් නම භාවිතා කිරීම
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
-        const generateResponse = await fetch(apiUrl, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
+        const prompt = `Rewrite the following text to make it sound completely natural, conversational, and written by a real human. Remove any AI-sounding tone. Text: ${text}`;
+
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 contents: [{
-                    parts: [{ text: "Please rewrite the following text to sound more natural, human-like, and conversational. Do not add extra comments, just provide the humanized text: \n\n" + text }]
+                    parts: [{ text: prompt }]
                 }]
             })
         });
 
-        const data = await generateResponse.json();
+        const data = await response.json();
         
-        if (data.candidates && data.candidates[0].content.parts[0].text) {
-            res.status(200).json({ result: data.candidates[0].content.parts[0].text });
-        } else {
-            res.status(500).json({ error: 'Generation Error: ' + JSON.stringify(data) });
+        if (!response.ok) {
+            return res.status(response.status).json({ 
+                error: data.error?.message || 'API Error', 
+                code: response.status 
+            });
         }
+
+        // ප්‍රතිඵලය ලබා ගැනීම
+        const result = data.candidates[0].content.parts[0].text;
+        
+        res.status(200).json({ result: result });
+
     } catch (error) {
-        res.status(500).json({ error: 'Server Error: ' + error.message });
+        console.error(error);
+        res.status(500).json({ error: 'Something went wrong! Please try again.' });
     }
 }
