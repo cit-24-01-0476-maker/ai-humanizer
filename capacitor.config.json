@@ -2,9 +2,5 @@
   "appId": "com.oska.ezyhumanizer",
   "appName": "ezyhumernzi.AI",
   "webDir": "www",
-  "bundledWebRuntime": false,
-  "server": {
-    "url": "https://ezyhumernzi.ai.oskaa.tech",
-    "cleartext": false
-  }
+  "bundledWebRuntime": false
 }

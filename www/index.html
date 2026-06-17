@@ -5,707 +5,196 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ezyhumernzi.AI</title>
 
-    <!-- Tab Logo -->
     <link rel="icon" type="image/gif" href="logo.gif">
 
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@1,600&display=swap" rel="stylesheet">
-    
     <style>
-        * { box-sizing: border-box; }
-        
-        body { 
-            margin: 0; 
-            font-family: 'Inter', sans-serif; 
-            color: #333; 
-            min-height: 100vh; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            background-image: url('bg.jpg'); 
-            background-size: cover; 
-            background-position: center;
-            background-attachment: fixed;
-            animation: moveClouds 35s ease-in-out infinite alternate;
+        * {
+            box-sizing: border-box;
         }
 
-        @keyframes moveClouds {
-            0% { background-position: 0% 20%; }
-            100% { background-position: 100% 80%; }
-        }
-
-        /* Nav */
-        .top-nav {
-            width: 100%;
-            padding: 25px 50px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 100;
-        }
-
-        .nav-logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            color: white;
-            font-weight: 600;
-            font-size: 1.3rem;
-            letter-spacing: 0.5px;
-            text-shadow: 0 2px 5px rgba(0,0,0,0.3);
-        }
-
-        .live-logo {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            mix-blend-mode: multiply;
-            filter: contrast(1.1) brightness(1.2);
-        }
-        
-        .nav-links {
-            display: flex;
-            gap: 30px;
-            align-items: center;
-        }
-
-        .nav-links a {
-            color: rgba(255, 255, 255, 0.9);
-            text-decoration: none;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: all 0.3s;
-            cursor: pointer;
-        }
-
-        .nav-links a:hover {
-            opacity: 0.7;
-        }
-
-        .nav-vpn-btn {
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(5px);
-            padding: 6px 18px;
-            border-radius: 20px;
-            font-weight: 600 !important;
-        }
-
-        /* Hero */
-        .hero {
-            text-align: center;
-            color: white;
-            margin-top: 140px;
-            margin-bottom: 40px;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            width: 100%;
-            padding: 0 20px;
-        }
-
-        .hero h1 {
-            font-size: 4.2rem;
-            font-weight: 300;
+        body {
             margin: 0;
-            line-height: 1.2;
-            letter-spacing: -1px;
-        }
-
-        .hero h1 span {
-            font-family: 'Playfair Display', serif;
-            font-style: italic;
-            font-weight: 600;
-        }
-
-        .hero p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            max-width: 550px;
-            margin: 20px auto;
-            line-height: 1.6;
-            font-weight: 300;
-        }
-
-        .hero-btn {
-            background: #000;
-            color: #fff;
-            border: none;
-            padding: 16px 45px;
-            border-radius: 40px;
-            font-size: 0.95rem;
-            font-weight: 500;
-            margin-top: 15px;
-            cursor: pointer;
-            transition: transform 0.1s;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .hero-btn:active {
-            transform: scale(0.95);
-        }
-
-        /* Floating Box */
-        .app-box {
-            background: rgba(255, 255, 255, 0.98);
-            border-radius: 20px;
-            width: 90%;
-            max-width: 950px;
-            padding: 35px;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.1);
-            margin-bottom: 50px;
-            animation: floatEffect 4s ease-in-out infinite;
-        }
-
-        @keyframes floatEffect {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
-        }
-
-        .input-area {
-            width: 100%;
-            height: 220px;
-            border: none;
-            resize: none;
-            font-size: 1.15rem;
-            outline: none;
-            color: #333;
-            background: transparent;
-            line-height: 1.6;
-        }
-        
-        .controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 20px;
-        }
-
-        .btn-group {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-
-        .btn {
-            padding: 12px 26px;
-            border-radius: 30px;
-            border: none;
-            cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: all 0.1s;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            background-image: url("bg.jpg");
+            background-size: cover;
+            background-position: center;
             display: flex;
             justify-content: center;
             align-items: center;
-        }
-
-        .btn:disabled {
-            opacity: 0.55;
-            cursor: not-allowed;
-        }
-
-        .btn-black {
-            background: #000;
             color: white;
+            overflow: hidden;
         }
 
-        .btn-clear {
-            color: #e74c3c;
-            border: 1px solid #ffe0e0;
-            background: #fffaf9;
-        }
-
-        .btn-outline {
-            background: #fff;
-            border: 1px solid #e0e0e0;
-            color: #333;
-        }
-        
-        .result-wrapper {
-            position: relative;
-            display: none;
-            margin-top: 25px;
-        }
-
-        .result-box {
-            background: #f8fbff;
-            border: 1px solid #eef3f9;
-            border-radius: 12px;
-            padding: 25px 25px 50px 25px;
-            font-size: 1.1rem;
-            min-height: 120px;
-            line-height: 1.6;
-            white-space: pre-wrap;
-        }
-
-        .copy-btn {
-            position: absolute;
-            bottom: 15px;
-            right: 15px;
-            background: white;
-            border: 1px solid #ddd;
-            padding: 8px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-
-        /* Modals */
-        .modal-overlay {
-            display: none;
+        .overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(5px);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(2px);
         }
 
-        .modal-content {
-            background: #fff;
-            padding: 40px;
-            border-radius: 20px;
-            text-align: center;
-            max-width: 450px;
-            width: 90%;
-            animation: popIn 0.3s ease-out forwards;
+        .app-card {
             position: relative;
+            z-index: 2;
+            width: 88%;
+            max-width: 420px;
+            padding: 35px 25px;
+            border-radius: 28px;
+            background: rgba(255, 255, 255, 0.16);
+            backdrop-filter: blur(18px);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            animation: popIn 0.7s ease forwards;
         }
 
         @keyframes popIn {
-            from { transform: scale(0.8); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
+            from {
+                opacity: 0;
+                transform: scale(0.92) translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
         }
 
-        .close-modal {
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            font-size: 1.8rem;
+        .logo {
+            width: 95px;
+            height: 95px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 18px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+            background: white;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: 0.4px;
+        }
+
+        .tagline {
+            margin: 12px auto 25px;
+            font-size: 0.98rem;
+            line-height: 1.6;
+            opacity: 0.92;
+            max-width: 320px;
+        }
+
+        .access-btn {
+            width: 100%;
+            border: none;
+            outline: none;
+            background: #000;
+            color: #fff;
+            padding: 17px 24px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 700;
             cursor: pointer;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+            transition: transform 0.15s, opacity 0.15s;
         }
-        
-        .oska-brand {
+
+        .access-btn:active {
+            transform: scale(0.96);
+            opacity: 0.85;
+        }
+
+        .small-text {
+            margin-top: 18px;
+            font-size: 0.78rem;
+            opacity: 0.8;
+        }
+
+        .loader {
+            display: none;
+            margin: 18px auto 0;
+            width: 32px;
+            height: 32px;
+            border: 3px solid rgba(255, 255, 255, 0.35);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .footer {
             position: fixed;
-            bottom: 15px;
-            right: 20px;
-            color: rgba(255,255,255,0.8);
+            bottom: 16px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            z-index: 2;
             font-size: 0.75rem;
-            font-weight: 600;
-            text-shadow: 0 1px 3px rgba(0,0,0,0.5);
-        }
-
-        /* Mobile Optimization */
-        @media (max-width: 768px) {
-            .top-nav {
-                padding: 15px 20px;
-                flex-direction: column;
-                gap: 15px;
-                background: rgba(255,255,255,0.05);
-                backdrop-filter: blur(5px);
-            }
-
-            .nav-logo {
-                font-size: 1.1rem;
-            }
-
-            .live-logo {
-                width: 35px;
-                height: 35px;
-            }
-
-            .nav-links {
-                display: flex;
-                flex-wrap: wrap;
-                justify-content: center;
-                gap: 15px;
-                width: 100%;
-            }
-
-            .nav-links a {
-                font-size: 0.85rem;
-            }
-
-            .nav-vpn-btn {
-                padding: 6px 14px;
-                font-size: 0.8rem;
-            }
-
-            .hero {
-                margin-top: 160px;
-                margin-bottom: 30px;
-            }
-
-            .hero h1 {
-                font-size: 2.6rem;
-            }
-
-            .hero p {
-                font-size: 0.95rem;
-            }
-
-            .hero-btn {
-                padding: 14px 35px;
-                font-size: 0.9rem;
-            }
-
-            .app-box {
-                width: 95%;
-                padding: 20px;
-                border-radius: 15px;
-                margin-bottom: 80px;
-            }
-
-            .input-area {
-                height: 160px;
-                font-size: 1rem;
-            }
-
-            .controls {
-                flex-direction: column;
-                gap: 20px;
-                align-items: center;
-            }
-
-            .word-count-container,
-            #wordCountContainer {
-                font-size: 0.85rem;
-            }
-
-            .btn-group {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 10px;
-                width: 100%;
-            }
-
-            .btn {
-                font-size: 0.85rem;
-                padding: 10px;
-                width: 100%;
-            }
-
-            .btn-black {
-                grid-column: span 2;
-                padding: 14px;
-                font-size: 0.95rem;
-            }
-
-            .result-box {
-                padding: 20px 20px 60px 20px;
-                font-size: 1rem;
-            }
-
-            .copy-btn {
-                font-size: 0.8rem;
-                padding: 6px 12px;
-            }
-
-            .modal-content {
-                padding: 25px 20px;
-            }
-
-            .modal-content h2 {
-                font-size: 1.3rem;
-            }
-
-            .modal-content p {
-                font-size: 0.95rem;
-            }
-
-            .oska-brand {
-                position: static;
-                text-align: center;
-                margin-bottom: 20px;
-                width: 100%;
-                font-size: 0.7rem;
-            }
+            opacity: 0.85;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.4);
         }
     </style>
 </head>
 
 <body>
-    <audio id="popSound" src="https://assets.mixkit.co/active_storage/sfx/212/212-preview.mp3" preload="auto"></audio>
+    <div class="overlay"></div>
 
-    <header class="top-nav">
-        <div class="nav-logo">
-            <img src="logo.gif" alt="Logo" class="live-logo">
-            ezyhumernzi.AI
-        </div>
+    <div class="app-card">
+        <img src="logo.gif" alt="ezyhumernzi.AI Logo" class="logo">
 
-        <nav class="nav-links">
-            <a href="#" onclick="playSound(); openModal('howItWorksModal');">How It Works</a>
-            <a href="#" onclick="playSound(); openModal('helpModal');">Help</a>
-            <a href="#" onclick="playSound(); openModal('contactModal');">Contact</a>
-            <a href="https://www.oskavpn.codes" target="_blank" class="nav-vpn-btn" onclick="playSound()">BUY VPNS ↗</a>
-        </nav>
-    </header>
+        <h1>ezyhumernzi.AI</h1>
 
-    <div class="hero">
-        <h1>AI wrote it.<br>We <span>Humanize</span> it</h1>
-        <p>School, socials, DMs, or your hustle — rewrite any AI-sounding text into your true voice.</p>
-        <a href="ezyhumernzi.apk" download class="hero-btn" onclick="playSound()">Get Mobile APK</a>
+        <p class="tagline">
+            Make your AI-written text sound natural, simple, and human.
+        </p>
+
+        <button class="access-btn" onclick="openWebsite()">
+            Access Now ✦
+        </button>
+
+        <div id="loader" class="loader"></div>
+
+        <p class="small-text">
+            Tap Access Now to open the official website.
+        </p>
     </div>
 
-    <div class="app-box">
-        <textarea id="inputText" class="input-area" placeholder="Paste Your AI Generated Content Here..." oninput="updateWordCount()"></textarea>
-
-        <div class="controls">
-            <div id="wordCountContainer">
-                <span id="wordCount">0</span>/200 words
-            </div>
-
-            <div class="btn-group">
-                <button class="btn btn-clear" onclick="clearText(); playSound();">Clear ✕</button>
-                <button class="btn btn-outline" style="pointer-events: none;">ezyhumernzi.AI v1</button>
-                <button class="btn btn-black" id="humanizeBtn" onclick="playSound(); humanizeText();">Humanize ✦</button>
-            </div>
-        </div>
-
-        <div id="resultWrapper" class="result-wrapper">
-            <div id="resultBox" class="result-box"></div>
-            <button class="copy-btn" id="copyBtn" onclick="playSound(); copyText();">Copy Text 📋</button>
-        </div>
+    <div class="footer">
+        Powered by oska.tech
     </div>
-
-    <!-- Modals -->
-    <div id="howItWorksModal" class="modal-overlay">
-        <div class="modal-content">
-            <span class="close-modal" onclick="playSound(); closeModal('howItWorksModal')">&times;</span>
-            <h2>How It Works</h2>
-            <p style="text-align: left;">
-                1. Paste your AI-written text into the box.<br>
-                2. Click 'Humanize'.<br>
-                3. We rephrase it to sound naturally human.<br>
-                4. Copy the result and use it!
-            </p>
-        </div>
-    </div>
-
-    <div id="helpModal" class="modal-overlay">
-        <div class="modal-content">
-            <span class="close-modal" onclick="playSound(); closeModal('helpModal')">&times;</span>
-            <h2>Help & Tips</h2>
-            <p style="text-align: left;">
-                • Word Limit: 200 words per request.<br>
-                • If you see server busy error, please wait 10 seconds and try again.<br>
-                • Ensure your text is clear for best results.
-            </p>
-        </div>
-    </div>
-
-    <div id="contactModal" class="modal-overlay">
-        <div class="modal-content">
-            <span class="close-modal" onclick="playSound(); closeModal('contactModal')">&times;</span>
-            <h2>Contact Details</h2>
-            <p>
-                <strong>Oshadha Perera</strong><br>
-                SRILANKA<br>
-                📞 0754565755<br>
-                ✉️ oshadahperera500@gmail.com
-            </p>
-        </div>
-    </div>
-
-    <div class="oska-brand">Powered by oska.tech</div>
 
     <script>
-        const LIVE_API_URL = "https://ai-humanizer-git-main-oshadhapereras-projects.vercel.app/api/humanize";
+        const WEBSITE_URL = "https://ezyhumernzi.ai.oskaa.tech/";
 
-        function playSound() {
-            const sound = document.getElementById("popSound");
-
-            if (sound) {
-                sound.play().catch(function () {});
-            }
-        }
-
-        function openModal(id) {
-            document.getElementById(id).style.display = "flex";
-        }
-
-        function closeModal(id) {
-            document.getElementById(id).style.display = "none";
-        }
-
-        function getWordCount(text) {
-            return text.trim().split(/\s+/).filter(Boolean).length;
-        }
-
-        function updateWordCount() {
-            const inputText = document.getElementById("inputText");
-            const wordCount = getWordCount(inputText.value);
-            const wordCountElement = document.getElementById("wordCount");
-            const humanizeBtn = document.getElementById("humanizeBtn");
-
-            wordCountElement.innerText = wordCount;
-
-            if (wordCount > 200) {
-                humanizeBtn.disabled = true;
-                wordCountElement.style.color = "red";
-            } else {
-                humanizeBtn.disabled = false;
-                wordCountElement.style.color = "#333";
-            }
-        }
-
-        function clearText() {
-            document.getElementById("inputText").value = "";
-            document.getElementById("resultWrapper").style.display = "none";
-            document.getElementById("resultBox").innerText = "";
-            updateWordCount();
-        }
-
-        async function copyText() {
-            const text = document.getElementById("resultBox").innerText;
-
-            if (!text) {
-                return;
-            }
-
-            const btn = document.getElementById("copyBtn");
+        async function openWebsite() {
+            const loader = document.getElementById("loader");
+            loader.style.display = "block";
 
             try {
-                await navigator.clipboard.writeText(text);
-                btn.innerText = "Copied! ✔";
-            } catch (error) {
-                const tempTextArea = document.createElement("textarea");
-                tempTextArea.value = text;
-                document.body.appendChild(tempTextArea);
-                tempTextArea.select();
-                document.execCommand("copy");
-                document.body.removeChild(tempTextArea);
-                btn.innerText = "Copied! ✔";
-            }
-
-            setTimeout(function () {
-                btn.innerText = "Copy Text 📋";
-            }, 2000);
-        }
-
-        function isAppOrLocal() {
-            const protocol = window.location.protocol;
-            const hostname = window.location.hostname;
-
-            if (window.Capacitor !== undefined) {
-                return true;
-            }
-
-            if (protocol === "capacitor:" || protocol === "file:") {
-                return true;
-            }
-
-            if (hostname === "localhost" || hostname === "127.0.0.1" || hostname === "") {
-                return true;
-            }
-
-            return false;
-        }
-
-        function getApiUrl() {
-            if (isAppOrLocal()) {
-                return LIVE_API_URL;
-            }
-
-            return "/api/humanize";
-        }
-
-        async function readJsonResponse(response) {
-            const rawText = await response.text();
-
-            try {
-                return JSON.parse(rawText);
-            } catch (error) {
-                throw new Error(
-                    "Server returned invalid response. Status: " +
-                    response.status +
-                    ". Response: " +
-                    rawText.slice(0, 120)
-                );
-            }
-        }
-
-        async function humanizeText() {
-            const inputText = document.getElementById("inputText");
-            const resultWrapper = document.getElementById("resultWrapper");
-            const resultBox = document.getElementById("resultBox");
-            const humanizeBtn = document.getElementById("humanizeBtn");
-
-            const text = inputText.value.trim();
-            const wordCount = getWordCount(text);
-
-            if (!text) {
-                resultWrapper.style.display = "block";
-                resultBox.innerHTML = "<span style='color: red;'>❌ Please enter some text first.</span>";
-                return;
-            }
-
-            if (wordCount > 200) {
-                resultWrapper.style.display = "block";
-                resultBox.innerHTML = "<span style='color: red;'>❌ Maximum word limit is 200 words.</span>";
-                return;
-            }
-
-            humanizeBtn.disabled = true;
-            humanizeBtn.innerText = "Humanizing... ⏳";
-
-            resultWrapper.style.display = "block";
-            resultBox.innerHTML = "Please wait... ⏳";
-
-            try {
-                const response = await fetch(getApiUrl(), {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        text: text
-                    })
-                });
-
-                const data = await readJsonResponse(response);
-
-                if (!response.ok) {
-                    resultBox.innerHTML =
-                        "<span style='color: red;'>❌ Error: " +
-                        (data.error || "API request failed") +
-                        "</span>";
+                if (
+                    window.Capacitor &&
+                    window.Capacitor.Plugins &&
+                    window.Capacitor.Plugins.Browser
+                ) {
+                    await window.Capacitor.Plugins.Browser.open({
+                        url: WEBSITE_URL
+                    });
+                    loader.style.display = "none";
                     return;
                 }
 
-                if (data.error) {
-                    resultBox.innerHTML =
-                        "<span style='color: red;'>❌ Error: " +
-                        data.error +
-                        "</span>";
-                    return;
-                }
-
-                if (!data.result) {
-                    resultBox.innerHTML =
-                        "<span style='color: red;'>❌ No result returned from API.</span>";
-                    return;
-                }
-
-                resultBox.innerText = data.result;
+                window.open(WEBSITE_URL, "_system");
+                loader.style.display = "none";
 
             } catch (error) {
-                console.error(error);
-
-                resultBox.innerHTML =
-                    "<span style='color: red;'>❌ Network/API Error: " +
-                    error.message +
-                    "</span>";
-            } finally {
-                humanizeBtn.disabled = false;
-                humanizeBtn.innerText = "Humanize ✦";
+                loader.style.display = "none";
+                window.location.href = WEBSITE_URL;
             }
         }
     </script>
