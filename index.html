@@ -76,7 +76,6 @@
             resultDiv.innerHTML = "කරුණාකර රැඳී සිටින්න... ⏳";
 
             try {
-                // දැන් අපි කතා කරන්නේ අපේම ආරක්ෂිත Backend එකට (Vercel)
                 const response = await fetch('/api/humanize', {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -87,6 +86,9 @@
                 
                 if(data.result) {
                     resultDiv.innerHTML = data.result;
+                } else if (data.error) {
+                    // ඇත්තම Error එක මෙතන පෙන්වයි
+                    resultDiv.innerHTML = "❌ දෝෂයක්: " + data.error;
                 } else {
                     resultDiv.innerHTML = "සමාවෙන්න, දෝෂයක් ඇතිවිය! ❌";
                 }

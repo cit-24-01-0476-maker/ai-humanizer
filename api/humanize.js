@@ -1,14 +1,14 @@
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
     const { text } = req.body;
-    // Vercel එකේ අපි හංගන API Key එක මෙතනින් ගන්නවා
     const apiKey = process.env.GEMINI_API_KEY;
 
+    // API Key එක Vercel එකෙන් ආවේ නැත්නම් ඒක කියන්න
     if (!apiKey) {
-        return res.status(500).json({ error: 'API key is missing in Vercel' });
+        return res.status(500).json({ error: 'API Key එක Vercel එකට සම්බන්ධ වෙලා නැහැ! Settings > Environment Variables චෙක් කරන්න.' });
     }
 
     try {
@@ -27,9 +27,10 @@ export default async function handler(req, res) {
         if(data.candidates && data.candidates[0].content.parts[0].text) {
             res.status(200).json({ result: data.candidates[0].content.parts[0].text });
         } else {
-            res.status(500).json({ error: 'Failed to generate content' });
+            // Gemini එකෙන් ආපු ඇත්තම Error එක පෙන්වන්න
+            res.status(500).json({ error: 'Gemini API Error: ' + JSON.stringify(data) });
         }
     } catch (error) {
-        res.status(500).json({ error: 'Internal Server Error' });
+        res.status(500).json({ error: 'Server Error: ' + error.message });
     }
 }
