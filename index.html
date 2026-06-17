@@ -21,7 +21,6 @@
             flex-direction: column; 
             align-items: center; 
             background-image: url('bg.jpg'); 
-            /* වළාකුළු Effect එක සඳහා සැකසුම් */
             background-size: 130% 130%; 
             background-attachment: fixed;
             animation: moveClouds 35s ease-in-out infinite alternate;
@@ -109,9 +108,9 @@
             margin-top: 15px;
             cursor: pointer;
             box-shadow: 0 10px 20px rgba(0,0,0,0.15);
-            transition: transform 0.2s;
+            transition: transform 0.1s; /* වේගවත් කරා Sound එකට ගැලපෙන්න */
         }
-        .hero-btn:hover { transform: scale(1.03); }
+        .hero-btn:active { transform: scale(0.95); }
 
         /* ------------------
            Premium App Box 
@@ -123,7 +122,7 @@
             max-width: 950px; 
             padding: 25px 35px; 
             box-shadow: 0 25px 60px rgba(0,0,0,0.1); 
-            margin-bottom: 40px;
+            margin-bottom: 20px;
         }
 
         .box-top-bar {
@@ -166,65 +165,69 @@
         .over-limit { color: #e74c3c !important; }
 
         .btn-group { display: flex; gap: 12px; align-items: center; }
-        .btn { padding: 12px 26px; border-radius: 30px; border: none; cursor: pointer; font-size: 0.9rem; font-weight: 500; transition: all 0.2s; display: flex; align-items: center; gap: 8px; }
+        .btn { padding: 12px 26px; border-radius: 30px; border: none; cursor: pointer; font-size: 0.9rem; font-weight: 500; transition: all 0.1s; display: flex; align-items: center; gap: 8px; }
         
         .btn-outline { background: #fff; border: 1px solid #e0e0e0; color: #333; }
-        .btn-outline:hover { background: #f9f9f9; border-color: #ccc; }
+        .btn-outline:active { background: #f0f0f0; transform: scale(0.95); }
         
         .btn-clear { color: #e74c3c; border-color: #ffe0e0; background: #fffaf9; }
-        .btn-clear:hover { background: #fee8e7; border-color: #ffcaca; }
+        .btn-clear:active { background: #ffe0e0; transform: scale(0.95); }
 
         .btn-black { background: #000; color: white; }
-        .btn-black:hover { background: #222; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
-        .btn-black:disabled { background: #aaa; cursor: not-allowed; transform: none; box-shadow: none; }
+        .btn-black:active { background: #333; transform: scale(0.95); }
+        .btn-black:disabled { background: #aaa; cursor: not-allowed; transform: none; }
 
-        /* ------------------
-           Result Box & Copy Button
-           ------------------ */
-        .result-wrapper {
-            position: relative;
-            display: none; /* JS එකෙන් Control කරයි */
-            margin-top: 25px;
-            animation: fadeIn 0.4s ease-in-out;
-        }
-
-        .result-box { 
-            background: #f8fbff; 
-            border: 1px solid #eef3f9;
-            border-radius: 12px; 
-            padding: 25px 25px 50px 25px; /* Copy Button එකට යටින් ඉඩ තියලා */
-            font-size: 1.1rem; 
-            color: #222; 
-            line-height: 1.7; 
-            white-space: pre-wrap;
-            min-height: 120px;
-        }
-
-        .copy-btn {
-            position: absolute;
-            bottom: 15px;
-            right: 15px;
-            background: white;
-            border: 1px solid #ddd;
-            color: #333;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            transition: all 0.2s;
-        }
-
+        /* Result Box & Copy Button */
+        .result-wrapper { position: relative; display: none; margin-top: 25px; animation: fadeIn 0.4s ease-in-out; }
+        .result-box { background: #f8fbff; border: 1px solid #eef3f9; border-radius: 12px; padding: 25px 25px 50px 25px; font-size: 1.1rem; color: #222; line-height: 1.7; white-space: pre-wrap; min-height: 120px; }
+        
+        .copy-btn { position: absolute; bottom: 15px; right: 15px; background: white; border: 1px solid #ddd; color: #333; padding: 8px 16px; border-radius: 8px; font-size: 0.85rem; font-weight: 600; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: all 0.1s; }
         .copy-btn:hover { background: #f0f0f0; border-color: #ccc; }
         .copy-btn:active { transform: scale(0.95); }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Floating Brand */
+        /* ------------------
+           Contact & Footer Section
+           ------------------ */
+        .footer-section {
+            width: 90%;
+            max-width: 950px;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            color: #222;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .contact-info { font-size: 0.85rem; line-height: 1.5; font-weight: 500; }
+        .contact-info span { color: #555; }
+        .contact-info strong { color: #111; }
+
+        .vpn-link {
+            background: #4a90e2;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px rgba(74, 144, 226, 0.3);
+        }
+        .vpn-link:hover { background: #357abd; transform: translateY(-2px); }
+
         .oska-brand {
             position: fixed;
-            bottom: 20px;
+            bottom: 15px;
             right: 20px;
             color: rgba(255,255,255,0.8);
             font-size: 0.75rem;
@@ -237,16 +240,19 @@
         /* Mobile Fixes */
         @media (max-width: 800px) {
             .top-nav { padding: 20px; justify-content: center; }
-            .nav-links { display: none; } /* ෆෝන් එකේදී ලින්ක් අයින් කරලා Clean පෙනුමක් දුන්නා */
+            .nav-links { display: none; }
             .hero { margin-top: 100px; }
             .hero h1 { font-size: 2.8rem; }
             .app-box { width: 95%; padding: 20px; }
             .controls { flex-direction: column; gap: 20px; align-items: flex-start; }
             .btn-group { width: 100%; display: flex; justify-content: flex-end; flex-wrap: wrap; }
+            .footer-section { flex-direction: column; text-align: center; justify-content: center; width: 95%; }
         }
     </style>
 </head>
 <body>
+
+    <audio id="popSound" src="https://assets.mixkit.co/active_storage/sfx/212/212-preview.mp3" preload="auto"></audio>
 
     <header class="top-nav">
         <div class="nav-logo">
@@ -263,7 +269,7 @@
     <div class="hero">
         <h1>AI wrote it.<br>We <span>Humanize</span> it</h1>
         <p>School, socials, DMs, or your hustle — rewrite any AI-sounding text into your true voice.</p>
-        <button class="hero-btn">Get Mobile APK</button>
+        <button class="hero-btn" onclick="playSound()">Get Mobile APK</button>
     </div>
 
     <div class="app-box">
@@ -280,22 +286,37 @@
             </div>
             
             <div class="btn-group">
-                <button class="btn btn-outline btn-clear" onclick="clearText()">Clear ✕</button>
+                <button class="btn btn-outline btn-clear" onclick="clearText(); playSound();">Clear ✕</button>
                 <button class="btn btn-outline" style="font-weight: bold; color: #0056b3; pointer-events: none;">oskaa.ai v1</button>
-                <button class="btn btn-black" id="humanizeBtn" onclick="humanizeText()">Humanize ✦</button>
+                <button class="btn btn-black" id="humanizeBtn" onclick="playSound(); humanizeText();">Humanize ✦</button>
             </div>
         </div>
 
         <div id="resultWrapper" class="result-wrapper">
             <div id="resultBox" class="result-box"></div>
-            <button class="copy-btn" id="copyBtn" onclick="copyText()">Copy Text 📋</button>
+            <button class="copy-btn" id="copyBtn" onclick="playSound(); copyText();">Copy Text 📋</button>
         </div>
+    </div>
+
+    <div class="footer-section">
+        <div class="contact-info">
+            <strong>Oshadha Perera</strong> | SRILANKA <br>
+            <span>📞 0754565755</span> &nbsp;|&nbsp; <span>✉️ oshadahperera500@gmail.com</span>
+        </div>
+        <a href="https://www.oskavpn.codes" target="_blank" class="vpn-link" onclick="playSound()">Buy VPNs ↗</a>
     </div>
 
     <div class="oska-brand">Powered by oska.tech</div>
 
     <script>
         const MAX_WORDS = 200;
+
+        // Sound ප්ලේ කරන Function එක
+        function playSound() {
+            const sound = document.getElementById("popSound");
+            sound.currentTime = 0; // හැමතිස්සෙම මුල ඉඳන් ප්ලේ වෙන්න
+            sound.play().catch(error => console.log("Audio play prevented by browser"));
+        }
 
         function updateWordCount() {
             const text = document.getElementById("inputText").value.trim();
@@ -318,7 +339,6 @@
             }
         }
 
-        // Box එක හිස් කරන Function එක
         function clearText() {
             document.getElementById("inputText").value = "";
             document.getElementById("resultWrapper").style.display = "none";
@@ -326,15 +346,13 @@
             updateWordCount();
         }
 
-        // Copy කරන Function එක
         function copyText() {
             const textToCopy = document.getElementById("resultBox").innerText;
             navigator.clipboard.writeText(textToCopy).then(() => {
                 const copyBtn = document.getElementById("copyBtn");
                 copyBtn.innerText = "Copied! ✔";
-                copyBtn.style.background = "#e6ffe6"; // කොපි කරාම කොළ පාට වෙනවා
+                copyBtn.style.background = "#e6ffe6"; 
                 
-                // තත්පර 2කින් ආයෙත් පරණ විදියට වෙනස් වෙනවා
                 setTimeout(() => {
                     copyBtn.innerText = "Copy Text 📋";
                     copyBtn.style.background = "white";
@@ -366,7 +384,7 @@
             btn.innerText = "Humanizing... ⏳";
             btn.disabled = true;
             resultWrapper.style.display = "block";
-            copyBtn.style.display = "none"; // Load වෙනකන් Copy බොත්තම හංගනවා
+            copyBtn.style.display = "none"; 
             resultBox.innerHTML = "<span style='color: #444; font-style: italic;'>Crafting human-like text... Please wait.</span>";
 
             try {
@@ -380,7 +398,7 @@
                 
                 if(data.result) {
                     resultBox.innerHTML = data.result;
-                    copyBtn.style.display = "block"; // සාර්ථක වුණාම Copy බොත්තම පෙන්වනවා
+                    copyBtn.style.display = "block"; 
                 } else if (data.error) {
                     resultBox.innerHTML = "<span style='color: red;'>❌ Error: " + data.error + "</span>";
                 } else {
