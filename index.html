@@ -3,77 +3,164 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Humanizer Web App</title>
+    <title>AI Humanizer - Premium</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@1,600&display=swap" rel="stylesheet">
+    
     <style>
+        * { box-sizing: border-box; }
         body { 
-            font-family: sans-serif; 
-            padding: 20px; 
-            max-width: 600px; 
-            margin: auto; 
-            background-color: #f4f7f6; 
-        }
-        h1 { 
+            margin: 0; 
+            font-family: 'Inter', sans-serif; 
+            /* අහසක් වගේ ලස්සන නිල් පසුබිම */
+            background: linear-gradient(135deg, #7ab0d6 0%, #d4e4f7 100%); 
             color: #333; 
-            text-align: center; 
+            min-height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            padding: 40px 20px; 
         }
-        textarea { 
+
+        /* ප්‍රධාන මාතෘකා කොටස */
+        .hero { text-align: center; color: white; margin-bottom: 40px; margin-top: 20px; }
+        .hero h1 { font-size: 3.5rem; font-weight: 300; margin: 0; text-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .hero h1 span { font-family: 'Playfair Display', serif; font-style: italic; font-weight: 600; }
+        .hero p { font-size: 1.1rem; opacity: 0.9; max-width: 500px; margin: 15px auto; line-height: 1.5; }
+
+        /* සුදු පාට ප්‍රධාන Box එක */
+        .app-box { 
+            background: white; 
+            border-radius: 24px; 
             width: 100%; 
-            height: 120px; 
-            margin-bottom: 15px; 
-            padding: 10px; 
-            border-radius: 8px; 
-            border: 1px solid #ccc; 
-            font-size: 16px; 
-            box-sizing: border-box; 
+            max-width: 800px; 
+            padding: 30px; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1); 
+            transition: all 0.3s ease;
         }
-        button { 
+
+        /* ටයිප් කරන තැන */
+        .input-area { 
             width: 100%; 
-            padding: 12px; 
-            background-color: #007bff; 
-            color: white; 
+            height: 250px; 
             border: none; 
-            border-radius: 8px; 
+            resize: none; 
+            font-size: 1.2rem; 
+            outline: none; 
+            font-family: 'Inter', sans-serif; 
+            color: #444; 
+            line-height: 1.6;
+        }
+        .input-area::placeholder { color: #bbb; }
+
+        /* යට තියෙන බොත්තම් සහ වචන ගණන පෙන්වන පේළිය */
+        .controls { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding-top: 20px; 
+            border-top: 1px solid #f0f0f0; 
+            margin-top: 10px;
+        }
+        .word-count { font-size: 0.9rem; color: #888; font-weight: 600; }
+        
+        .btn-group { display: flex; gap: 10px; }
+        .btn { 
+            padding: 12px 24px; 
+            border-radius: 30px; 
+            border: none; 
             cursor: pointer; 
-            font-size: 16px; 
-            font-weight: bold; 
+            font-size: 0.95rem; 
+            font-weight: 600; 
+            transition: all 0.2s; 
         }
-        button:hover { 
-            background-color: #0056b3; 
+        .btn-outline { background: white; border: 1px solid #ddd; color: #555; }
+        .btn-outline:hover { background: #f9f9f9; border-color: #ccc; }
+        .btn-black { background: #111; color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .btn-black:hover { background: #333; transform: translateY(-2px); }
+        .btn-black:disabled { background: #888; cursor: not-allowed; transform: none; }
+
+        /* ප්‍රතිඵලය පෙන්වන කොටස */
+        .result-box { 
+            margin-top: 25px; 
+            background: #f8fbff; 
+            border: 1px solid #e0ebf5;
+            border-radius: 16px; 
+            padding: 25px; 
+            font-size: 1.15rem; 
+            color: #222; 
+            display: none; 
+            line-height: 1.6; 
+            white-space: pre-wrap;
         }
-        #result { 
-            margin-top: 20px; 
-            padding: 15px; 
-            background-color: #fff; 
-            border: 1px solid #ddd; 
-            border-radius: 8px; 
-            min-height: 80px; 
-            font-size: 16px; 
-            white-space: pre-wrap; 
-            line-height: 1.5; 
+
+        /* AI Detectors සලකුණු (පහළින්) */
+        .trust-section { margin-top: 60px; text-align: center; width: 100%; max-width: 800px; background: white; padding: 30px; border-radius: 30px 30px 0 0; }
+        .trust-section p { color: #888; font-size: 0.9rem; font-style: italic; margin-bottom: 20px; }
+        .badges { display: flex; gap: 30px; justify-content: center; flex-wrap: wrap; opacity: 0.5; font-weight: bold; font-size: 1.2rem; color: #333; }
+        
+        @media (max-width: 600px) {
+            .hero h1 { font-size: 2.5rem; }
+            .controls { flex-direction: column; gap: 15px; align-items: flex-start; }
+            .btn-group { width: 100%; display: flex; justify-content: space-between; }
         }
     </style>
 </head>
 <body>
 
-    <h1>My Free AI Humanizer</h1>
-    <p style="text-align: center;">රොබෝ කෙනෙක් වගේ ලියපු දේවල් මනුස්සයෙක් ලියන විදියට වෙනස් කරමු!</p>
-    
-    <textarea id="inputText" placeholder="මෙතන ටයිප් කරන්න (හරි Paste කරන්න)..."></textarea>
-    <button onclick="humanizeText()">Humanize Text</button>
+    <div class="hero">
+        <h1>AI wrote it.<br>We <span>Humanize</span> it</h1>
+        <p>School, socials, DMs, or your hustle — rewrite any AI-sounding text into your true voice.</p>
+    </div>
 
-    <div id="result">ප්‍රතිඵලය මෙතන පෙන්වයි...</div>
+    <div class="app-box">
+        <textarea id="inputText" class="input-area" placeholder="Paste Your AI Generated Content Here..." oninput="updateWordCount()"></textarea>
+        
+        <div class="controls">
+            <div class="word-count"><span id="wordCount">0</span> words</div>
+            <div class="btn-group">
+                <button class="btn btn-outline">Check For AI</button>
+                <button class="btn btn-outline">Style ⌄</button>
+                <button class="btn btn-black" id="humanizeBtn" onclick="humanizeText()">Humanize ✦</button>
+            </div>
+        </div>
+
+        <div id="resultBox" class="result-box"></div>
+    </div>
+
+    <div class="trust-section">
+        <p>Bypass AI content detectors</p>
+        <div class="badges">
+            <span>Copyleaks</span>
+            <span>grammarly</span>
+            <span>Turnitin</span>
+            <span>ZeroGPT</span>
+        </div>
+    </div>
 
     <script>
+        // වචන ගණන් කරන Function එක
+        function updateWordCount() {
+            const text = document.getElementById("inputText").value;
+            const words = text.trim().split(/\s+/).filter(word => word.length > 0).length;
+            document.getElementById("wordCount").innerText = words;
+        }
+
+        // AI එකට කතා කරන Function එක
         async function humanizeText() {
             const text = document.getElementById("inputText").value;
-            const resultDiv = document.getElementById("result");
+            const resultBox = document.getElementById("resultBox");
+            const btn = document.getElementById("humanizeBtn");
 
             if (!text) {
-                alert("කරුණාකර යමක් ටයිප් කරන්න!");
+                alert("Please paste some text first!");
                 return;
             }
 
-            resultDiv.innerHTML = "කරුණාකර රැඳී සිටින්න... ⏳";
+            // Button එක Loading විදියට වෙනස් කරනවා
+            btn.innerText = "Humanizing... ⏳";
+            btn.disabled = true;
+            resultBox.style.display = "block";
+            resultBox.innerHTML = "<span style='color: #666;'>Crafting human-like text... Please wait.</span>";
 
             try {
                 const response = await fetch('/api/humanize', {
@@ -85,16 +172,19 @@
                 const data = await response.json();
                 
                 if(data.result) {
-                    resultDiv.innerHTML = data.result;
+                    resultBox.innerHTML = data.result;
                 } else if (data.error) {
-                    // ඇත්තම Error එක මෙතන පෙන්වයි
-                    resultDiv.innerHTML = "❌ දෝෂයක්: " + data.error;
+                    resultBox.innerHTML = "<span style='color: red;'>❌ Error: " + data.error + "</span>";
                 } else {
-                    resultDiv.innerHTML = "සමාවෙන්න, දෝෂයක් ඇතිවිය! ❌";
+                    resultBox.innerHTML = "<span style='color: red;'>❌ Something went wrong!</span>";
                 }
             } catch (error) {
-                resultDiv.innerHTML = "අන්තර්ජාල සම්බන්ධතාවය හෝ API එකේ දෝෂයක්! ❌";
+                resultBox.innerHTML = "<span style='color: red;'>❌ Network or API Error!</span>";
                 console.error(error);
+            } finally {
+                // Button එක ආයෙත් පරණ විදියට හදනවා
+                btn.innerText = "Humanize ✦";
+                btn.disabled = false;
             }
         }
     </script>
